@@ -89,7 +89,7 @@ async function salvaDatiFirebase() {
 window.cambiaSchedaVista = (giorno) => {
   schedaVistaCorrente = giorno;
   document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
-  event.target.classList.add("active");
+  if (event && event.target) event.target.classList.add("active");
   document.getElementById("current-tab-label").textContent = giorno;
   caricaScheda();
 };
@@ -168,14 +168,12 @@ async function salvaCaricoETimer(id, recuperoStr) {
     caricaScheda();
   }
 
-  // Estrai i secondi dal testo di recupero (es: "90s" -> 90)
   let secondi = parseInt(recuperoStr);
-  if (isNaN(secondi)) secondi = 90; // Default se non specificato
+  if (isNaN(secondi)) secondi = 90;
 
   avviaTimer(secondi);
 }
 
-/* LOGICA TIMER COUNTDOWN */
 function avviaTimer(secondi) {
   clearInterval(timerInterval);
   const timerBox = document.getElementById("timer-box");
@@ -199,7 +197,6 @@ function avviaTimer(secondi) {
     } else {
       clearInterval(timerInterval);
       display.textContent = "FINE! 🎉";
-      // Suono acustico di avviso
       try {
         let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         let osc = audioCtx.createOscillator();
@@ -218,12 +215,10 @@ document.getElementById("stop-timer-btn").addEventListener("click", () => {
   document.getElementById("timer-box").style.display = "none";
 });
 
-/* LOGICA GRAFICO INTERATTIVO CHART.JS */
 function apriGrafico(id, nomeEsercizio) {
   const modal = document.getElementById("chart-modal");
   document.getElementById("chart-title").textContent = `Progressione: ${nomeEsercizio}`;
   
-  // Rimuove la classe hidden e mostra il pop-up solo al click
   modal.classList.remove("hidden");
   modal.style.display = "flex";
 
@@ -262,54 +257,62 @@ function apriGrafico(id, nomeEsercizio) {
   });
 }
 
-// Chiusura grafico
 document.getElementById("close-chart-btn").addEventListener("click", () => {
   const modal = document.getElementById("chart-modal");
   modal.classList.add("hidden");
   modal.style.display = "none";
 });
 
-/* CALENDARIO */
+/* GENERAZIONE GRIGLIA CALENDARIO QUADRATINI */
 function renderCalendario() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
-  const monthNames = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+  const container = document.getElementById("calendar-days");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  const ora = new Date();
+  const anno = ora.getFullYear();
+  const mese = ora.getMonth();
+
+  const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
   
-  document.getElementById("calendar-month-year").textContent = `${monthNames[month]} ${year}`;
+  const calendarTitle = document.getElementById("calendar-month-year");
+  if (calendarTitle) calendarTitle.textContent = `${nomiMesi[mese]} ${anno}`;
 
-  const currentMonthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
-  const totalMonthWorkouts = Object.keys(appData.calendarEvents).filter(d => d.startsWith(currentMonthPrefix)).length;
-  document.getElementById("workout-count").textContent = `${totalMonthWorkouts} allenamenti`;
+  const currentMonthPrefix = `${anno}-${String(mese + 1).padStart(2, '0')}`;
+  const totalMonthWorkouts = Object.keys(appData.calendarEvents || {}).filter(d => d.startsWith(currentMonthPrefix)).length;
+  
+  const workoutCountLabel = document.getElementById("workout-count");
+  if (workoutCountLabel) workoutCountLabel.textContent = `${totalMonthWorkouts} allenamenti`;
 
-  const grid = document.getElementById("calendar-days");
-  grid.innerHTML = "";
+  const primoGiorno = new Date(anno, mese, 1);
+  const ultimoGiorno = new Date(anno, mese + 1, 0).getDate();
 
-  const firstDayIndex = new Date(year, month, 1).getDay();
-  const adjustedFirstDay = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  let giornoInizio = primoGiorno.getDay() - 1;
+  if (giornoInizio === -1) giornoInizio = 6;
 
-  for (let i = 0; i < adjustedFirstDay; i++) {
+  for (let i = 0; i < giornoInizio; i++) {
     const emptyCell = document.createElement("div");
     emptyCell.className = "day-cell empty";
-    grid.appendChild(emptyCell);
+    container.appendChild(emptyCell);
   }
 
-  for (let day = 1; day <= daysInMonth; day++) {
-    const dayStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const dayCell = document.createElement("div");
-    dayCell.className = "day-cell";
-    dayCell.innerHTML = `<span>${day}</span>`;
-
-    if (dayStr === dataSelezionata) dayCell.classList.add("selected");
+  for (let giorno = 1; giorno <= ultimoGiorno; giorno++) {
+    const dateStr = `${anno}-${String(mese + 1).padStart(2, '0')}-${String(giorno).padStart(2, '0')}`;
     
-    if (appData.calendarEvents[dayStr]) {
-      dayCell.classList.add("worked-out");
-      dayCell.innerHTML += `<span class="tag-giorno">${appData.calendarEvents[dayStr]}</span>`;
+    const cell = document.createElement("div");
+    cell.className = "day-cell";
+    cell.innerHTML = `<span>${giorno}</span>`;
+
+    if (dateStr === dataSelezionata) cell.classList.add("selected");
+
+    if (appData.calendarEvents && appData.calendarEvents[dateStr]) {
+      cell.classList.add("worked-out");
+      cell.innerHTML += `<span class="tag-giorno">${appData.calendarEvents[dateStr]}</span>`;
     }
 
-    dayCell.addEventListener("click", () => selezionaDataCalendario(dayStr));
-    grid.appendChild(dayCell);
+    cell.addEventListener("click", () => selezionaDataCalendario(dateStr));
+    container.appendChild(cell);
   }
 
   aggiornaUISelezioneData();
@@ -321,28 +324,35 @@ function selezionaDataCalendario(dateStr) {
 }
 
 function aggiornaUISelezioneData() {
-  document.getElementById("selected-date-label").textContent = dataSelezionata;
-  const workoutPresente = appData.calendarEvents[dataSelezionata];
+  const selectedLabel = document.getElementById("selected-date-label");
+  if (selectedLabel) selectedLabel.textContent = dataSelezionata;
+
+  const workoutPresente = appData.calendarEvents ? appData.calendarEvents[dataSelezionata] : null;
   const removeBtn = document.getElementById("remove-workout-btn");
 
-  if (workoutPresente) {
-    removeBtn.style.display = "block";
-    removeBtn.textContent = `❌ Rimuovi ${workoutPresente} da questa data`;
-  } else {
-    removeBtn.style.display = "none";
+  if (removeBtn) {
+    if (workoutPresente) {
+      removeBtn.style.display = "block";
+      removeBtn.textContent = `❌ Rimuovi ${workoutPresente} da questa data`;
+    } else {
+      removeBtn.style.display = "none";
+    }
   }
 }
 
 window.registraWorkoutInData = async (giornoNome) => {
+  if (!appData.calendarEvents) appData.calendarEvents = {};
   appData.calendarEvents[dataSelezionata] = giornoNome;
   await salvaDatiFirebase();
   renderCalendario();
 };
 
 window.rimuoviWorkoutInData = async () => {
-  delete appData.calendarEvents[dataSelezionata];
-  await salvaDatiFirebase();
-  renderCalendario();
+  if (appData.calendarEvents) {
+    delete appData.calendarEvents[dataSelezionata];
+    await salvaDatiFirebase();
+    renderCalendario();
+  }
 };
 
 document.getElementById("logout-btn").addEventListener("click", () => location.reload());
