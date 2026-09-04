@@ -40,30 +40,37 @@
     </nav>
 
 <main>
+      <nav class="tabs" style="margin-bottom: 20px;">
+        <button class="tab-btn active" onclick="cambiaSchedaVista('Giorno 1')">Giorno 1</button>
+        <button class="tab-btn" onclick="cambiaSchedaVista('Giorno 2')">Giorno 2</button>
+        <button class="tab-btn" onclick="cambiaSchedaVista('Giorno 3')">Giorno 3</button>
+      </nav>
+
       <section class="calendar-section" style="margin-bottom: 24px;">
-        <h3>📅 Calendario Allenamenti</h3>
-        <div id="calendar-header">
-          <span id="calendar-month-year"></span>
-          <span id="workout-count"></span>
+        <div id="calendar-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 id="calendar-month-year" style="margin:0;"></h3>
+          <span id="workout-count" style="font-size:13px; font-weight:bold; color:#4F46E5;"></span>
         </div>
+        
         <div id="calendar-grid">
           <div class="weekdays">
             <span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span>
           </div>
           <div id="calendar-days"></div>
         </div>
+
         <div id="calendar-actions" style="margin-top:15px; text-align:center;">
-          <p>Data selezionata: <strong id="selected-date-label"></strong></p>
+          <p style="font-size:13px;">Data selezionata: <strong id="selected-date-label"></strong></p>
           <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:8px;">
-            <button class="btn-sm" onclick="registraWorkoutInData('Giorno 1')">Registra Giorno 1</button>
-            <button class="btn-sm" onclick="registraWorkoutInData('Giorno 2')">Registra Giorno 2</button>
-            <button class="btn-sm" onclick="registraWorkoutInData('Giorno 3')">Registra Giorno 3</button>
+            <button class="btn-sm" onclick="registraWorkoutInData('Giorno 1')">Segna Giorno 1</button>
+            <button class="btn-sm" onclick="registraWorkoutInData('Giorno 2')">Segna Giorno 2</button>
+            <button class="btn-sm" onclick="registraWorkoutInData('Giorno 3')">Segna Giorno 3</button>
           </div>
           <button id="remove-workout-btn" class="btn-danger-sm" style="display:none; margin:10px auto 0 auto;" onclick="rimuoviWorkoutInData()">❌ Rimuovi Allenamento</button>
         </div>
       </section>
 
-      <h2 id="current-tab-label">Giorno 1</h2>
+      <h2 id="current-tab-label" style="margin-bottom: 12px;">Giorno 1</h2>
       <div id="workout-list"></div>
     </main>    
 
