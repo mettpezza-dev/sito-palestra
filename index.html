@@ -11,29 +11,29 @@
 </head>
 <body>
 
-<div id="login-container">
-  <div class="login-card">
-    <div class="login-icon">🏋️‍♀️</div>
-    <h1 class="login-title">GioiGym Workout</h1>
-    <p class="login-subtitle">Accedi per tracciare i tuoi progressi</p>
+  <div id="login-container">
+    <div class="login-card">
+      <div class="login-icon">🏋️‍♀️</div>
+      <h1 class="login-title">GioiGym Workout</h1>
+      <p class="login-subtitle">Accedi per tracciare i tuoi progressi</p>
 
-    <form id="login-form">
-      <div class="input-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" placeholder="Inserisci username" required autocomplete="username">
-      </div>
+      <form id="login-form">
+        <div class="input-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="Inserisci username" required autocomplete="username">
+        </div>
 
-      <div class="input-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
-      </div>
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+        </div>
 
-      <p id="login-error" style="color: #dc2626; font-size: 13px; font-weight: 600; margin-bottom: 12px; min-height: 18px;"></p>
+        <p id="login-error" style="color: #dc2626; font-size: 13px; font-weight: 600; margin-bottom: 12px;"></p>
 
-      <button type="submit" class="btn-login">Accedi ➔</button>
-    </form>
+        <button type="submit" class="btn-login">Accedi ➔</button>
+      </form>
+    </div>
   </div>
-</div>
 
   <div id="dashboard" class="hidden">
     <header class="header">
@@ -42,20 +42,19 @@
     </header>
 
     <!-- Timer overlay fisso in alto quando attivo -->
-    <div id="timer-box" style="display:none; position:fixed; top:10px; right:10px; background:#4F46E5; color:white; padding:10px 16px; border-radius:30px; font-weight:bold; box-shadow:0 4px 12px rgba(0,0,0,0.2); z-index:9999; align-items:center; gap:8px;">
-      ⏱️ Recupero: <span id="timer-display">00:00</span>
-      <button id="stop-timer-btn" style="background:transparent; border:none; color:white; font-weight:bold; cursor:pointer; margin-left:8px;">✕</button>
+    <div id="timer-box" style="display:none; position:fixed; top:10px; right:10px; background:#4F46E5; color:white; padding:10px 15px; border-radius:8px; z-index:1000; font-weight:bold;">
+      ⏱ Recupero: <span id="timer-display">00:00</span>
+      <button id="stop-timer-btn" style="background:transparent; border:none; color:white; font-weight:bold; margin-left:10px; cursor:pointer;">✖</button>
     </div>
 
-
-<main>
+    <main>
       <!-- 1. CALENDARIO IN CIMA -->
       <section class="calendar-section" style="margin-bottom: 24px;">
-        <div id="calendar-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div id="calendar-header" style="display:flex; justify-content:space-between; align-items:center;">
           <h3 id="calendar-month-year" style="margin:0; font-size: 18px; color: #1F2937;"></h3>
-          <span id="workout-count" style="font-size:13px; font-weight:bold; color:#4F46E5; background:#EEF2FF; padding:4px 10px; border-radius:20px;"></span>
+          <span id="workout-count" style="font-size:13px; font-weight:bold; color:#4F46E5;"></span>
         </div>
-        
+
         <div id="calendar-grid">
           <div class="weekdays">
             <span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span>
@@ -63,21 +62,20 @@
           <div id="calendar-days"></div>
         </div>
 
-        <!-- Azioni Calendario Eleganti -->
-        <div id="calendar-actions" style="margin-top:16px; padding-top:12px; border-top:1px solid #F3F4F6; text-align:center;">
-          <p style="font-size:13px; color:#6B7280; margin-bottom:8px;">Data selezionata: <strong id="selected-date-label" style="color:#111827;"></strong></p>
+        <div id="calendar-actions" style="margin-top:16px; padding-top:12px; border-top:1px solid #F3F4F6;">
+          <p style="font-size:13px; color:#6B7280; margin-bottom:8px;">Data selezionata: <strong id="selected-date-label"></strong></p>
           <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
-            <button class="btn-action-day" onclick="registraWorkoutInData('Giorno 1')">＋ Segna Giorno 1</button>
-            <button class="btn-action-day" onclick="registraWorkoutInData('Giorno 2')">＋ Segna Giorno 2</button>
-            <button class="btn-action-day" onclick="registraWorkoutInData('Giorno 3')">＋ Segna Giorno 3</button>
+            <button class="btn-action-day" onclick="registraWorkoutInData('Giorno 1')">+ Segna Giorno 1</button>
+            <button class="btn-action-day" onclick="registraWorkoutInData('Giorno 2')">+ Segna Giorno 2</button>
+            <button class="btn-action-day" onclick="registraWorkoutInData('Giorno 3')">+ Segna Giorno 3</button>
           </div>
-          <button id="remove-workout-btn" class="btn-danger-sm" style="display:none; margin:12px auto 0 auto;" onclick="rimuoviWorkoutInData()">❌ Rimuovi Allenamento</button>
+          <button id="remove-workout-btn" class="btn-danger-sm" style="display:none; margin:12px auto 0 auto;">Rimuovi allenamento</button>
         </div>
       </section>
 
       <!-- 2. SELEZIONE SCHEDA SUBITO PRIMA DEGLI ESERCIZI -->
       <div style="margin-bottom: 16px;">
-        <p style="font-size: 12px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Seleziona Scheda:</p>
+        <p style="font-size: 12px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">SELEZIONA SCHEDA:</p>
         <nav class="tabs-container">
           <button class="tab-btn active" onclick="cambiaSchedaVista('Giorno 1', this)">Giorno 1</button>
           <button class="tab-btn" onclick="cambiaSchedaVista('Giorno 2', this)">Giorno 2</button>
@@ -86,33 +84,34 @@
       </div>
 
       <!-- 3. LISTA ESERCIZI -->
-      <h2 id="current-tab-label" style="font-size:20px; font-weight:700; color:#111827; margin-bottom: 12px;">Giorno 1</h2>
+      <h2 id="current-tab-label" style="font-size:20px; font-weight:700; color:#111827; margin-bottom:12px;">Giorno 1</h2>
       <div id="workout-list"></div>
 
-   <!-- ESPORTAZIONE CALENDARIO CON SELEZIONE DATA/ORA -->
-    <div style="margin: 25px auto; padding: 15px; background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; text-align: center; max-width: 400px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-      <label for="calendar-datetime" style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">
-        Scegli data e ora dell'allenamento:
-      </label>
-      <input type="datetime-local" id="calendar-datetime" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 14px; margin-bottom: 12px; width: 80%;">
-      <br>
-      <button id="btn-export-calendar" type="button" style="padding: 10px 18px; background-color: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; width: 80%;">
-        + Aggiungi a Calendario iPhone
-      </button>
-    </div>
-  </main> 
-    
-  <!-- Modal per il Grafico dei Carichi -->
-<div id="chart-modal" class="hidden" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 10000;">
-  <div style="background: white; padding: 20px; border-radius: 16px; width: 90%; max-width: 500px; position: relative;">
-    <button id="close-chart-btn" style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 20px; cursor: pointer;">✕</button>
-    <h3 id="chart-title" style="font-size: 16px; margin-bottom: 15px; text-align: center;">Progressione Carico</h3>
-    <div style="position: relative; height: 250px; width: 100%;">
-      <canvas id="progressionChart"></canvas>
-    </div>
-  </div>
-</div>
+      <!-- ESPORTAZIONE CALENDARIO CON SELEZIONE DATA/ORA -->
+      <div style="margin: 25px auto; padding: 15px; background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; text-align: center; max-width: 400px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <label for="calendar-datetime" style="display: block; font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">
+          Scegli data e ora dell'allenamento:
+        </label>
+        <input type="datetime-local" id="calendar-datetime" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 14px; margin-bottom: 12px; width: 80%;">
+        <br>
+        <button id="btn-export-calendar" type="button" style="padding: 10px 18px; background-color: #2563eb; color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; width: 80%;">
+          + Aggiungi a Calendario iPhone
+        </button>
+      </div>
+    </main>
 
-  <script type="module" src="script.js"></script>
+    <!-- Modal per il Grafico dei Carichi -->
+    <div id="chart-modal" class="hidden" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center;">
+      <div style="background: white; padding: 20px; border-radius: 16px; width: 90%; max-width: 500px; position: relative;">
+        <button id="close-chart-btn" style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 20px; cursor: pointer;">✖</button>
+        <h3 id="chart-title" style="font-size: 16px; margin-bottom: 15px; text-align: center;">Progressione Carichi</h3>
+        <div style="position: relative; height: 250px; width: 100%;">
+          <canvas id="progressionChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+  </div>
 </body>
 </html>
