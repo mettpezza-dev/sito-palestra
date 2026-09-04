@@ -145,7 +145,7 @@ function caricaScheda() {
         <div class="tracker-row">
           <input type="number" id="input-${item.id}" placeholder="Kg oggi" value="${ultimoPeso}">
           <button class="btn-save" id="btn-save-${item.id}">Salva Serie & Timer ⏱️</button>
-          <button type="button" class="btn-reset-serie" onclick="resettaSerieEsercizio('${esercizio.id}')" title="Annulla/Resetta serie" style="background:#f3f4f6; border:1px solid #d1d5db; border-radius:50%; width:32px; height:32px; cursor:pointer; margin-left:8px; font-size:16px;">↺</button>
+          <button type="button" class="btn-reset-serie" onclick="resettaSerieEsercizio('${item.id}', ${totali})" title="Annulla/Resetta serie" style="background:#f3f4f6; border:1px solid #d1d5db; border-radius:50%; width:32px; height:32px; cursor:pointer; margin-left:8px; font-size:16px;">↺</button>
         </div>
         
         <div style="margin-top:8px;">
@@ -169,6 +169,25 @@ function caricaScheda() {
     }
   });
 }
+
+/* --- FUNZIONE RESET SERIE & FERMA TIMER --- */
+window.resettaSerieEsercizio = function(id, totali) {
+  serieCompletate[id] = 0;
+  
+  const countLabel = document.getElementById(`series-count-${id}`);
+  if (countLabel) {
+    countLabel.textContent = `0 di ${totali} completate`;
+  }
+
+  // Ferma il timer se attivo
+  if (timerInterval) {
+    clearInterval(timerInterval);
+  }
+  const timerBox = document.getElementById("timer-box");
+  if (timerBox) {
+    timerBox.style.display = "none";
+  }
+};
 
 async function salvaCaricoETimer(id, recuperoStr, totaliSerie) {
   const valore = document.getElementById(`input-${id}`).value;
@@ -209,7 +228,7 @@ function riproduciSuonoFineTimer() {
         osc.frequency.value = freq;
         gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
         osc.connect(gain);
-        gain.connect(audioCtx.destination);
+        osc.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + duration);
       }, delay);
