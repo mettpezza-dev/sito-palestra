@@ -60,7 +60,7 @@ let appData = {
 
 document.getElementById("login-form").addEventListener("submit", async function(e) {
   e.preventDefault();
-  if (document.getElementById("username").value === "ragazza" && document.getElementById("password").value === "gym2026") {
+  if (document.getElementById("username").value === "Gioia" && document.getElementById("password").value === "gioia2026") {
     document.getElementById("login-container").classList.add("hidden");
     document.getElementById("dashboard").classList.remove("hidden");
     await caricaDatiFirebase();
