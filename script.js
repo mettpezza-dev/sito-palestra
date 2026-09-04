@@ -401,12 +401,29 @@ window.rimuoviWorkoutInData = async () => {
 document.getElementById("logout-btn").addEventListener("click", () => location.reload());
 
 /* --- ESPORTAZIONE CALENDARIO IPHONE (.ICS) --- */
+// Imposta di default la data e ora attuale nel campo di input
+document.addEventListener("DOMContentLoaded", function() {
+  const inputDatetime = document.getElementById("calendar-datetime");
+  if (inputDatetime) {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    inputDatetime.value = now.toISOString().slice(0, 16);
+  }
+});
+
 document.addEventListener("click", function(e) {
   if (e.target && e.target.id === "btn-export-calendar") {
-    const ora = new Date();
-    const start = ora.toISOString().replace(/-|:|\.\d+/g, '');
-    const endDate = new Date(ora.getTime() + 60 * 60 * 1000);
-    const end = endDate.toISOString().replace(/-|:|\.\d+/g, '');
+    const datetimeInput = document.getElementById("calendar-datetime");
+    let dataScelta = datetimeInput && datetimeInput.value ? new Date(datetimeInput.value) : new Date();
+
+    // Formattazione data nel formato UTC richiesto da iCalendar (YYYYMMDDTHHMMSSZ)
+    const formatICSDate = (d) => d.toISOString().replace(/-|:|\.\d+/g, '');
+
+    const start = formatICSDate(dataScelta);
+    const endDate = new Date(dataScelta.getTime() + 60 * 60 * 1000); // Durata 1 ora
+    const end = formatICSDate(endDate);
+
+    const nomeScheda = typeof schedaVistaCorrente !== 'undefined' ? schedaVistaCorrente : 'Allenamento';
 
     const icsContent = 
 `BEGIN:VCALENDAR
@@ -417,8 +434,8 @@ UID:${Date.now()}@gioigym.app
 DTSTAMP:${start}
 DTSTART:${start}
 DTEND:${end}
-SUMMARY:🏋️‍♀️ Allenamento GioiGym - ${schedaVistaCorrente}
-DESCRIPTION:Sessione di allenamento completata su GioiGym Workout.
+SUMMARY:🏋️‍♀️ Allenamento GioiGym - ${nomeScheda}
+DESCRIPTION:Sessione di allenamento pianificata/completata su GioiGym Workout.
 STATUS:CONFIRMED
 END:VEVENT
 END:VCALENDAR`;
