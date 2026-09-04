@@ -272,6 +272,88 @@ input:focus { border-color: var(--primary); }
   flex: 1;
 }
 
+/* Stili aggiuntivi per Calendario Interattivo e Tabs */
+.selected-day-info {
+  font-size: 13px;
+  color: var(--text-main);
+  background: #EEF2FF;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.workout-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.workout-selector label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.btn-group {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-day-select {
+  flex: 1;
+  padding: 8px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--primary);
+}
+
+.btn-day-select:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.day-cell.selected {
+  border: 2px solid var(--primary) !important;
+  font-weight: 700;
+}
+
+.day-cell .tag-giorno {
+  font-size: 8px;
+  display: block;
+  margin-top: 2px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+/* TABS SCHEDE */
+.tabs-container {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px;
+  background: #E5E7EB;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  background: var(--primary);
+  color: white;
+}
+
 .saved-tag {
   font-size: 11px;
   color: var(--success);
