@@ -110,35 +110,42 @@ function caricaScheda() {
     const fatte = serieCompletate[item.id] || 0;
     const totali = parseInt(item.serie) || 1;
 
-    // Storico pulito senza icone ripetute, mostrando le ultime sessioni
     let htmlStorico = storia.slice(-3).reverse().map(h => `<div style="font-size:11px; color:#6B7280; padding:2px 0; border-bottom:1px solid #F3F4F6;">• <strong>${h.data}</strong> — ${h.kg} kg (RIR: ${h.rir !== undefined ? h.rir : '-'})</div>`).join("");
 
     const isInfoBlock = item.id.includes("warmup") || item.id.includes("cooldown");
     const querySearch = encodeURIComponent(item.esercizio + " esecuzione corretta biomeccanica");
     const videoSearchUrl = `https://www.youtube.com/results?search_query=${querySearch}`;
 
-    // Calcolo Algoritmico della Prossima Sessione (Scientific Autoregulation)
+    // Algoritmo di Autoregolazione Avanzato con Gestione Automatica del Deload
     let suggerimentoHTML = "";
     if (!isInfoBlock && storia.length > 0) {
       const pesoAttuale = parseFloat(ultimoPeso);
       const rirAttuale = parseInt(ultimoRir);
-      const penultimoLog = storia.length > 1 ? storia[storia.length - 2] : null;
-
+      
+      const ultimeSessioni = storia.slice(-3);
+      const conteggioStalloOZeroRir = ultimeSessioni.filter(h => h.rir === 0 || h.rir === 1).length;
+      
       let prossimoCarico = pesoAttuale;
       let messaggio = "";
+      let tipoBox = "verde";
 
-      if (penultimoLog && parseFloat(penultimoLog.kg) === pesoAttuale && rirAttuale === 0 && parseInt(penultimoLog.rir ?? 1) === 0) {
+      if (ultimeSessioni.length >= 3 && conteggioStalloOZeroRir >= 3) {
         prossimoCarico = (pesoAttuale * 0.85).toFixed(1);
-        messaggio = `⚠️ <strong>Plateau rilevato</strong>: Consigliato <strong>Deload (-15%)</strong> a <strong>${prossimoCarico} kg</strong> per superare lo stallo.`;
+        messaggio = `🛡️ <strong>Protocollo Deload Attivo</strong>: Rilevato accumulo di fatica (3 sessioni consecutive a RIR basso). Consigliato alleggerire a <strong>${prossimoCarico} kg</strong> e ridurre le serie del 30% per favorire la supercompensazione.`;
+        tipoBox = "arancione";
       } else if (rirAttuale >= 2) {
         prossimoCarico = (pesoAttuale * 1.025).toFixed(1);
-        messaggio = `🔥 <strong>Progressione</strong>: Prossimo target stimato <strong>${prossimoCarico} kg</strong> (RIR era ≥ 2).`;
+        messaggio = `🔥 <strong>Progressione</strong>: Prossimo target stimato <strong>${prossimoCarico} kg</strong> (ottimo margine, RIR era ≥ 2).`;
       } else {
-        messaggio = `🎯 <strong>Mantenimento</strong>: Mantieni <strong>${pesoAttuale} kg</strong> per la prossima sessione fino a raggiungere RIR ≥ 2.`;
+        messaggio = `🎯 <strong>Mantenimento</strong>: Mantieni <strong>${pesoAttuale} kg</strong> per la prossima sessione finché non consolidi le ripetizioni con RIR ≥ 2.`;
       }
 
+      const stiliBox = tipoBox === "arancione" 
+        ? "background:#FFFBEB; border:1px solid #FDE68A; color:#92400E;" 
+        : "background:#F0FDF4; border:1px solid #BBF7D0; color:#166534;";
+
       suggerimentoHTML = `
-        <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:8px 12px; border-radius:8px; margin-top:8px; font-size:12px; color:#166534;">
+        <div style="${stiliBox} padding:8px 12px; border-radius:8px; margin-top:8px; font-size:12px;">
           🧠 <strong>Target Scientifico:</strong> ${messaggio}
         </div>
       `;
@@ -229,7 +236,6 @@ async function salvaCarico(id) {
   if (valoreKg !== "") {
     if (!appData.storicoCarichi[id]) appData.storicoCarichi[id] = [];
     
-    // Controlla se esiste già un log per la data odierna, se esiste lo aggiorna, altrimenti lo aggiunge
     const indiceEsistente = appData.storicoCarichi[id].findIndex(h => h.data === dataSelezionata);
     const nuovoLog = { 
       data: dataSelezionata, 
@@ -244,7 +250,7 @@ async function salvaCarico(id) {
     }
 
     await salvaDatiFirebase();
-    caricaScheda(); // Aggiorna istantaneamente la schermata con il box verde del target
+    caricaScheda();
   }
 }
 
