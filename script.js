@@ -429,8 +429,11 @@ function aggiornaUISelezioneData() {
     if (workoutPresente) {
       removeBtn.style.display = "block";
       removeBtn.textContent = `❌ Rimuovi ${workoutPresente} da questa data`;
+      // Assicura che il click sul pulsante richiami la funzione di rimozione
+      removeBtn.onclick = rimuoviWorkoutInData;
     } else {
       removeBtn.style.display = "none";
+      removeBtn.onclick = null;
     }
   }
 }
