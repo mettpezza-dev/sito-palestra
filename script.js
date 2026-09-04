@@ -399,3 +399,38 @@ window.rimuoviWorkoutInData = async () => {
 };
 
 document.getElementById("logout-btn").addEventListener("click", () => location.reload());
+
+/* --- ESPORTAZIONE CALENDARIO IPHONE (.ICS) --- */
+document.addEventListener("click", function(e) {
+  if (e.target && e.target.id === "btn-export-calendar") {
+    const ora = new Date();
+    const start = ora.toISOString().replace(/-|:|\.\d+/g, '');
+    const endDate = new Date(ora.getTime() + 60 * 60 * 1000);
+    const end = endDate.toISOString().replace(/-|:|\.\d+/g, '');
+
+    const icsContent = 
+`BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//GioiGym Workout//IT
+BEGIN:VEVENT
+UID:${Date.now()}@gioigym.app
+DTSTAMP:${start}
+DTSTART:${start}
+DTEND:${end}
+SUMMARY:🏋️‍♀️ Allenamento GioiGym - ${schedaVistaCorrente}
+DESCRIPTION:Sessione di allenamento completata su GioiGym Workout.
+STATUS:CONFIRMED
+END:VEVENT
+END:VCALENDAR`;
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'allenamento-gioigym.ics');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+});
