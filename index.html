@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FitTracker - Scheda & Calendario Cloud</title>
+  <title>FitTracker - Scheda & Progressioni</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -35,12 +35,12 @@
     <div class="dash-header">
       <div>
         <span class="badge">Aumento Massa Magra</span>
-        <h2>Total Body - Fase 1</h2>
+        <h2>Total Body - Programma</h2>
       </div>
       <button id="logout-btn" class="btn-secondary">Esci</button>
     </div>
 
-    <!-- SEZIONE CALENDARIO -->
+    <!-- CALENDARIO -->
     <div class="calendar-section">
       <div class="calendar-header">
         <h3 id="calendar-month-year">Mese Anno</h3>
@@ -53,17 +53,13 @@
       <div id="calendar-days" class="calendar-grid"></div>
 
       <div class="calendar-actions">
-        <button id="complete-btn" class="btn-complete">
-          ✅ Completa Allenamento Oggi
-        </button>
-        <button id="export-ics-btn" class="btn-ics">
-          📲 Aggiungi a Calendario iPhone
-        </button>
+        <button id="complete-btn" class="btn-complete">✅ Completa Allenamento Oggi</button>
+        <button id="export-ics-btn" class="btn-ics">📲 Aggiungi a Calendario iPhone</button>
       </div>
     </div>
 
     <div class="progress-info">
-      ☁️ <strong>Sincronizzato sul Cloud:</strong> I tuoi carichi e il calendario sono salvati su Firebase.
+      📈 <strong>Progressione:</strong> Salva i carichi ad ogni sessione per costruire lo storico dei tuoi aumenti di peso.
     </div>
 
     <div id="workout-list"></div>
