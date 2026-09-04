@@ -11,15 +11,29 @@
 </head>
 <body>
 
-  <div id="login-container" class="card">
-    <h2>🔒 Accesso GioiGym</h2>
+<div id="login-container">
+  <div class="login-card">
+    <div class="login-icon">🏋️‍♀️</div>
+    <h1 class="login-title">GioiGym Workout</h1>
+    <p class="login-subtitle">Accedi per tracciare i tuoi progressi</p>
+
     <form id="login-form">
-      <input type="text" id="username" placeholder="Username" required>
-      <input type="password" id="password" placeholder="Password" required>
-      <button type="submit" class="btn">Accedi</button>
-      <p id="login-error" class="error"></p>
+      <div class="input-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Inserisci username" required autocomplete="username">
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+
+      <p id="login-error" style="color: #dc2626; font-size: 13px; font-weight: 600; margin-bottom: 12px; min-height: 18px;"></p>
+
+      <button type="submit" class="btn-login">Accedi ➔</button>
     </form>
   </div>
+</div>
 
   <div id="dashboard" class="hidden">
     <header class="header">
