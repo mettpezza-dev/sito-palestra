@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FitTracker - Scheda & Progressioni</title>
+  <title>FitTracker - Scheda & Calendario Interattivo</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -35,12 +35,12 @@
     <div class="dash-header">
       <div>
         <span class="badge">Aumento Massa Magra</span>
-        <h2>Total Body - Programma</h2>
+        <h2>Programma 3 Giorni</h2>
       </div>
       <button id="logout-btn" class="btn-secondary">Esci</button>
     </div>
 
-    <!-- CALENDARIO -->
+    <!-- CALENDARIO INTERATTIVO -->
     <div class="calendar-section">
       <div class="calendar-header">
         <h3 id="calendar-month-year">Mese Anno</h3>
@@ -52,14 +52,35 @@
       </div>
       <div id="calendar-days" class="calendar-grid"></div>
 
+      <!-- SELEZIONE GIORNO E REGISTRAZIONE -->
       <div class="calendar-actions">
-        <button id="complete-btn" class="btn-complete">✅ Completa Allenamento Oggi</button>
+        <div class="selected-day-info">
+          <span>Giorno selezionato: <strong id="selected-date-label">Oggi</strong></span>
+        </div>
+        
+        <div class="workout-selector">
+          <label>Segna allenamento svolto:</label>
+          <div class="btn-group">
+            <button class="btn-day-select" onclick="registraWorkoutInData('Giorno 1')">Giorno 1</button>
+            <button class="btn-day-select" onclick="registraWorkoutInData('Giorno 2')">Giorno 2</button>
+            <button class="btn-day-select" onclick="registraWorkoutInData('Giorno 3')">Giorno 3</button>
+          </div>
+          <button id="remove-workout-btn" class="btn-secondary" style="width:100%; margin-top:6px; display:none;" onclick="rimuoviWorkoutInData()">❌ Rimuovi Allenamento da questa data</button>
+        </div>
+
         <button id="export-ics-btn" class="btn-ics">📲 Aggiungi a Calendario iPhone</button>
       </div>
     </div>
 
+    <!-- TABS PER VISUALIZZARE SCHEDE GIORNO 1, 2, 3 -->
+    <div class="tabs-container">
+      <button class="tab-btn active" onclick="cambiaSchedaVista('Giorno 1')">Giorno 1</button>
+      <button class="tab-btn" onclick="cambiaSchedaVista('Giorno 2')">Giorno 2</button>
+      <button class="tab-btn" onclick="cambiaSchedaVista('Giorno 3')">Giorno 3</button>
+    </div>
+
     <div class="progress-info">
-      📈 <strong>Progressione:</strong> Salva i carichi ad ogni sessione per costruire lo storico dei tuoi aumenti di peso.
+      📈 <strong>Scheda attiva:</strong> <span id="current-tab-label">Giorno 1</span>. Inserisci i carichi e le note per ogni esercizio.
     </div>
 
     <div id="workout-list"></div>
