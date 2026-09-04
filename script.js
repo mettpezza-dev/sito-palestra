@@ -20,34 +20,178 @@ let dataSelezionata = new Date().toISOString().split('T')[0];
 let appData = {
   schede: {
     "Giorno 1": [
-      { id: "g1_warmup", esercizio: "🔥 RISCALDAMENTO & MOBILITÀ", serie: "1", rep: "10 min", recupero: "-", descrizione: "Tapis roulant 3-5 min + 90/90 Hip Switches (10/lato) + Monster Walks con mini-band (15/lato). Esegui 2 serie di avvicinamento prima dell'esercizio 1." },
-      { id: "g1_ex1", esercizio: "B-Stance Hip Thrust al Cavo/Bilanciere", serie: "3", rep: "8-10", recupero: "120s", descrizione: "Posizione asimmetrica. Mentone incassato nello sterno, blocco finale in retroversione del bacino per massimizzare la tensione sul grande gluteo." },
-      { id: "g1_ex2", esercizio: "Deficit Bulgarian Split Squat (Busto 45°)", serie: "3", rep: "10-12", recupero: "90s", descrizione: "Piede anteriore su disco da 5kg. Busto inclinato a 45° per sovraccaricare lo stiro profondo del gluteo riducendo lo stress al ginocchio." },
-      { id: "g1_ex3", esercizio: "Lat Machine Presa Supina Inversa", serie: "3", rep: "10-12", recupero: "90s", descrizione: "Presa palmi rivolti a te alla larghezza spalle. Tira al petto deprimendo le scapole per attivare le fibre inferiori del gran dorsale." },
-      { id: "g1_ex4", esercizio: "Cable Standing Hip Abduction (a 30°)", serie: "3", rep: "12-15", recupero: "60s", descrizione: "Sposta la gamba indietro-diagonale a 30° per ingaggiare il fascio medio del gluteo lungo la sua reale linea anatomica." },
-      { id: "g1_ex5", esercizio: "Single-Leg RDL con Manubrio", serie: "3", rep: "10", recupero: "75s", descrizione: "Lavoro monolaterale di stabilità dell'anca per eliminare le asimmetrie di forza tra le due gambe." },
-      { id: "g1_ex6", esercizio: "Frog Pumps con Elastico (Finisher)", serie: "3", rep: "20-25", recupero: "45s", descrizione: "Piedi a contatto, ginocchia in fuori con mini-band. Contrazione metabolica veloce ad alto numero di ripetizioni per esaurire il gluteo." },
-      { id: "g1_cooldown", esercizio: "🧘 DEFATICAMENTO & RESET", serie: "1", rep: "5 min", recupero: "-", descrizione: "Respirazione diaframmatica a terra (2 min) + Couch Stretch (60s/lato) per decontrarre i flessori dell'anca." }
+      { 
+        id: "g1_warmup", 
+        esercizio: "🔥 RISCALDAMENTO & MOBILITÀ", 
+        serie: "1", rep: "10 min", recupero: "-", 
+        descrizione: "Tapis roulant 3-5 min + 90/90 Hip Switches (10/lato) + Monster Walks con mini-band (15/lato). Esegui 2 serie di avvicinamento prima dell'esercizio 1.",
+        gifUrl: "https://media.giphy.com/media/3o7TKSjRrfIPjeiVyM/giphy.gif"
+      },
+      { 
+        id: "g1_ex1", 
+        esercizio: "B-Stance Hip Thrust al Cavo/Bilanciere", 
+        serie: "3", rep: "8-10", recupero: "120s", 
+        descrizione: "Posizione asimmetrica. Mentone incassato nello sterno, blocco finale in retroversione del bacino per massimizzare la tensione sul grande gluteo.",
+        gifUrl: "https://media.giphy.com/media/xT1XGzAnABSX28oOC4/giphy.gif" 
+      },
+      { 
+        id: "g1_ex2", 
+        esercizio: "Deficit Bulgarian Split Squat (Busto 45°)", 
+        serie: "3", rep: "10-12", recupero: "90s", 
+        descrizione: "Piede anteriore su disco da 5kg. Busto inclinato a 45° per sovraccaricare lo stiro profondo del gluteo riducendo lo stress al ginocchio.",
+        gifUrl: "https://media.giphy.com/media/3o7TKP1oI8tTfO1yFi/giphy.gif"
+      },
+      { 
+        id: "g1_ex3", 
+        esercizio: "Lat Machine Presa Supina Inversa", 
+        serie: "3", rep: "10-12", recupero: "90s", 
+        descrizione: "Presa palmi rivolti a te alla larghezza spalle. Tira al petto deprimendo le scapole per attivare le fibre inferiori del gran dorsale.",
+        gifUrl: "https://media.giphy.com/media/l41YkFIiBxQdpmfO8/giphy.gif"
+      },
+      { 
+        id: "g1_ex4", 
+        esercizio: "Cable Standing Hip Abduction (a 30°)", 
+        serie: "3", rep: "12-15", recupero: "60s", 
+        descrizione: "Sposta la gamba indietro-diagonale a 30° per ingaggiare il fascio medio del gluteo lungo la sua reale linea anatomica.",
+        gifUrl: "https://media.giphy.com/media/3o7TKT0y1C84jC42is/giphy.gif"
+      },
+      { 
+        id: "g1_ex5", 
+        esercizio: "Single-Leg RDL con Manubrio", 
+        serie: "3", rep: "10", recupero: "75s", 
+        descrizione: "Lavoro monolaterale di stabilità dell'anca per eliminare le asimmetrie di forza tra le due gambe.",
+        gifUrl: "https://media.giphy.com/media/3o7TKv6MgQfd55v3O0/giphy.gif"
+      },
+      { 
+        id: "g1_ex6", 
+        esercizio: "Frog Pumps con Elastico (Finisher)", 
+        serie: "3", rep: "20-25", recupero: "45s", 
+        descrizione: "Piedi a contatto, ginocchia in fuori con mini-band. Contrazione metabolica veloce ad alto numero di ripetizioni per esaurire il gluteo.",
+        gifUrl: "https://media.giphy.com/media/l41Yf8iJ5jR5v4C8E/giphy.gif"
+      },
+      { 
+        id: "g1_cooldown", 
+        esercizio: "🧘 DEFATICAMENTO & RESET", 
+        serie: "1", rep: "5 min", recupero: "-", 
+        descrizione: "Respirazione diaframmatica a terra (2 min) + Couch Stretch (60s/lato) per decontrarre i flessori dell'anca.",
+        gifUrl: "https://media.giphy.com/media/3o7TKR1T20O0b6f9v2/giphy.gif"
+      }
     ],
     "Giorno 2": [
-      { id: "g2_warmup", esercizio: "🔥 RISCALDAMENTO & MOBILITÀ", serie: "1", rep: "10 min", recupero: "-", descrizione: "Cyclette 3 min + Thoracic Rotations (8/lato) + Arm Circles. Esegui 2 serie di avvicinamento prima dell'esercizio 1." },
-      { id: "g2_ex1", esercizio: "Incline Chest-Supported Row (Grip Neutro)", serie: "3", rep: "8-10", recupero: "90s", descrizione: "Sdraiata a pancia in giù su panca 30°. Tira i manubri guidando coi gomiti. Tensione isolata su trapezio e romboidi senza carico lombare." },
-      { id: "g2_ex2", esercizio: "Landmine Press Monolaterale", serie: "3", rep: "10-12", recupero: "90s", descrizione: "Spinta obliqua con bilanciere ad angolo. Protegge la cuffia dei rotatori e isola la testa anteriore e laterale del deltoide." },
-      { id: "g2_ex3", esercizio: "Romanian Deadlift (RDL) al Cavo/Bilanciere", serie: "3", rep: "8-10", recupero: "120s", descrizione: "Hip hinge puro: spingi il bacino indietro mantenendo la schiena neutra. Tensione massimale in allungamento su ischiocrurali e glutei." },
-      { id: "g2_ex4", esercizio: "Cable Y-Raise su Panca Inclinata", serie: "3", rep: "12-15", recupero: "60s", descrizione: "Solleva i cavi incrociati a forma di Y sul piano scapolare per isolare i deltoidi senza compressione articolare." },
-      { id: "g2_ex5", esercizio: "Face Pulls al Cavo Alto con Extra-Rotazione", serie: "3", rep: "15", recupero: "60s", descrizione: "Tira la corda verso la fronte aprendo i pugni all'esterno. Esercizio posturale per correggere l'atteggiamento di spalle chiuse." },
-      { id: "g2_ex6", esercizio: "Overhead Dumbbell Triceps Extension 60°", serie: "3", rep: "12-15", recupero: "60s", descrizione: "Estensione sopra la testa su panca inclinata per porre il capo lungo del tricipite in massimo allungamento anatomico." },
-      { id: "g2_cooldown", esercizio: "🧘 DEFATICAMENTO & RESET", serie: "1", rep: "5 min", recupero: "-", descrizione: "Decompressione alla sbarra (Hang passivo 45s) + Stretch pettorali alla parete." }
+      { 
+        id: "g2_warmup", 
+        esercizio: "🔥 RISCALDAMENTO & MOBILITÀ", 
+        serie: "1", rep: "10 min", recupero: "-", 
+        descrizione: "Cyclette 3 min + Thoracic Rotations (8/lato) + Arm Circles. Esegui 2 serie di avvicinamento prima dell'esercizio 1.",
+        gifUrl: "https://media.giphy.com/media/3o7TKP1oI8tTfO1yFi/giphy.gif"
+      },
+      { 
+        id: "g2_ex1", 
+        esercizio: "Incline Chest-Supported Row (Grip Neutro)", 
+        serie: "3", rep: "8-10", recupero: "90s", 
+        descrizione: "Sdraiata a pancia in giù su panca 30°. Tira i manubri guidando coi gomiti. Tensione isolata su trapezio e romboidi senza carico lombare.",
+        gifUrl: "https://media.giphy.com/media/xT1XGzAnABSX28oOC4/giphy.gif"
+      },
+      { 
+        id: "g2_ex2", 
+        esercizio: "Landmine Press Monolaterale", 
+        serie: "3", rep: "10-12", recupero: "90s", 
+        descrizione: "Spinta obliqua con bilanciere ad angolo. Protegge la cuffia dei rotatori e isola la testa anteriore e laterale del deltoide.",
+        gifUrl: "https://media.giphy.com/media/l41YkFIiBxQdpmfO8/giphy.gif"
+      },
+      { 
+        id: "g2_ex3", 
+        esercizio: "Romanian Deadlift (RDL) al Cavo/Bilanciere", 
+        serie: "3", rep: "8-10", recupero: "120s", 
+        descrizione: "Hip hinge puro: spingi il bacino indietro mantenendo la schiena neutra. Tensione massimale in allungamento su ischiocrurali e glutei.",
+        gifUrl: "https://media.giphy.com/media/3o7TKv6MgQfd55v3O0/giphy.gif"
+      },
+      { 
+        id: "g2_ex4", 
+        esercizio: "Cable Y-Raise su Panca Inclinata", 
+        serie: "3", rep: "12-15", recupero: "60s", 
+        descrizione: "Solleva i cavi incrociati a forma di Y sul piano scapolare per isolare i deltoidi senza compressione articolare.",
+        gifUrl: "https://media.giphy.com/media/3o7TKT0y1C84jC42is/giphy.gif"
+      },
+      { 
+        id: "g2_ex5", 
+        esercizio: "Face Pulls al Cavo Alto con Extra-Rotazione", 
+        serie: "3", rep: "15", recupero: "60s", 
+        descrizione: "Tira la corda verso la fronte aprendo i pugni all'esterno. Esercizio posturale per correggere l'atteggiamento di spalle chiuse.",
+        gifUrl: "https://media.giphy.com/media/3o7TKSjRrfIPjeiVyM/giphy.gif"
+      },
+      { 
+        id: "g2_ex6", 
+        esercizio: "Overhead Dumbbell Triceps Extension 60°", 
+        serie: "3", rep: "12-15", recupero: "60s", 
+        descrizione: "Estensione sopra la testa su panca inclinata per porre il capo lungo del tricipite in massimo allungamento anatomico.",
+        gifUrl: "https://media.giphy.com/media/l41Yf8iJ5jR5v4C8E/giphy.gif"
+      },
+      { 
+        id: "g2_cooldown", 
+        esercizio: "🧘 DEFATICAMENTO & RESET", 
+        serie: "1", rep: "5 min", recupero: "-", 
+        descrizione: "Decompressione alla sbarra (Hang passivo 45s) + Stretch pettorali alla parete.",
+        gifUrl: "https://media.giphy.com/media/3o7TKR1T20O0b6f9v2/giphy.gif"
+      }
     ],
     "Giorno 3": [
-      { id: "g3_warmup", esercizio: "🔥 RISCALDAMENTO & MOBILITÀ", serie: "1", rep: "10 min", recupero: "-", descrizione: "Camminata inclinata 5 min + 90/90 Hip Switches + Bodyweight Lunges dinamici." },
-      { id: "g3_ex1", esercizio: "Zercher Reverse Lunge su Step", serie: "3", rep: "10-12", recupero: "90s", descrizione: "Bilanciere all'incavo dei gomiti, passo indietro da uno step di 5cm. Attivazione sistemica di core, glutei e stabilizzatori." },
-      { id: "g3_ex2", esercizio: "Chest Press Bipolare al Cavo", serie: "3", rep: "10-12", recupero: "90s", descrizione: "Spinta controllata con tensione costante su tutto il ROM. Mantiene lo stimolo ipertrofico al petto senza sollecitare le articolazioni." },
-      { id: "g3_ex3", esercizio: "Hip Thrust Classico al Bilanciere", serie: "3", rep: "10-12", recupero: "90s", descrizione: "Esercizio cardine di spinta orizzontale per sovraccaricare la massa dei glutei nella fase di accorciamento." },
-      { id: "g3_ex4", esercizio: "Cable Lateral Raise (Alzate Laterali Cavo)", serie: "3", rep: "12-15", recupero: "60s", descrizione: "Tensione costante dal basso verso l'alto per massimizzare il lavoro sul deltoide mediale." },
-      { id: "g3_ex5", esercizio: "Pallof Press Dinamico Anti-Rotazionale", serie: "3", rep: "12", recupero: "60s", descrizione: "Spingi la maniglia del cavo in avanti stabilizzando il core contro la trazione laterale per la definizione addominale." },
-      { id: "g3_ex6", esercizio: "Hammer Curl ai Cavi o Manubri", serie: "3", rep: "12-15", recupero: "60s", descrizione: "Presa neutra a martello per sviluppare il muscolo brachiale e donare forma e definizione alle braccia." },
-      { id: "g3_cooldown", esercizio: "🧘 DEFATICAMENTO & RESET", serie: "1", rep: "5 min", recupero: "-", descrizione: "Child's Pose (Posizione del bambino) per 90 secondi + allungamento adduttori." }
+      { 
+        id: "g3_warmup", 
+        esercizio: "🔥 RISCALDAMENTO & MOBILITÀ", 
+        serie: "1", rep: "10 min", recupero: "-", 
+        descrizione: "Camminata inclinata 5 min + 90/90 Hip Switches + Bodyweight Lunges dinamici.",
+        gifUrl: "https://media.giphy.com/media/3o7TKSjRrfIPjeiVyM/giphy.gif"
+      },
+      { 
+        id: "g3_ex1", 
+        esercizio: "Zercher Reverse Lunge su Step", 
+        serie: "3", rep: "10-12", recupero: "90s", 
+        descrizione: "Bilanciere all'incavo dei gomiti, passo indietro da uno step di 5cm. Attivazione sistemica di core, glutei e stabilizzatori.",
+        gifUrl: "https://media.giphy.com/media/3o7TKP1oI8tTfO1yFi/giphy.gif"
+      },
+      { 
+        id: "g3_ex2", 
+        esercizio: "Chest Press Bipolare al Cavo", 
+        serie: "3", rep: "10-12", recupero: "90s", 
+        descrizione: "Spinta controllata con tensione costante su tutto il ROM. Mantiene lo stimolo ipertrofico al petto senza sollecitare le articolazioni.",
+        gifUrl: "https://media.giphy.com/media/xT1XGzAnABSX28oOC4/giphy.gif"
+      },
+      { 
+        id: "g3_ex3", 
+        esercizio: "Hip Thrust Classico al Bilanciere", 
+        serie: "3", rep: "10-12", recupero: "90s", 
+        descrizione: "Esercizio cardine di spinta orizzontale per sovraccaricare la massa dei glutei nella fase di accorciamento.",
+        gifUrl: "https://media.giphy.com/media/3o7TKT0y1C84jC42is/giphy.gif"
+      },
+      { 
+        id: "g3_ex4", 
+        esercizio: "Cable Lateral Raise (Alzate Laterali Cavo)", 
+        serie: "3", rep: "12-15", recupero: "60s", 
+        descrizione: "Tensione costante dal basso verso l'alto per massimizzare il lavoro sul deltoide mediale.",
+        gifUrl: "https://media.giphy.com/media/l41YkFIiBxQdpmfO8/giphy.gif"
+      },
+      { 
+        id: "g3_ex5", 
+        esercizio: "Pallof Press Dinamico Anti-Rotazionale", 
+        serie: "3", rep: "12", recupero: "60s", 
+        descrizione: "Spingi la maniglia del cavo in avanti stabilizzando il core contro la trazione laterale per la definizione addominale.",
+        gifUrl: "https://media.giphy.com/media/3o7TKv6MgQfd55v3O0/giphy.gif"
+      },
+      { 
+        id: "g3_ex6", 
+        esercizio: "Hammer Curl ai Cavi o Manubri", 
+        serie: "3", rep: "12-15", recupero: "60s", 
+        descrizione: "Presa neutra a martello per sviluppare il muscolo brachiale e donare forma e definizione alle braccia.",
+        gifUrl: "https://media.giphy.com/media/l41Yf8iJ5jR5v4C8E/giphy.gif"
+      },
+      { 
+        id: "g3_cooldown", 
+        esercizio: "🧘 DEFATICAMENTO & RESET", 
+        serie: "1", rep: "5 min", recupero: "-", 
+        descrizione: "Child's Pose (Posizione del bambino) per 90 secondi + allungamento adduttori.",
+        gifUrl: "https://media.giphy.com/media/3o7TKR1T20O0b6f9v2/giphy.gif"
+      }
     ]
   },
   storicoCarichi: {},
@@ -115,6 +259,16 @@ function caricaScheda() {
         <span>⏱️ ${item.recupero}</span>
       </div>
       ${item.descrizione ? `<p style="font-size:12px; color:#4B5563; margin-top:6px; margin-bottom:8px; line-height:1.4;">📖 <em>${item.descrizione}</em></p>` : ''}
+      
+      ${item.gifUrl ? `
+        <button class="btn-toggle-gif" style="background:#EEF2FF; color:#4F46E5; border:1px solid #C7D2FE; padding:6px 12px; border-radius:8px; font-weight:600; font-size:12px; cursor:pointer; margin-bottom:10px; width:100%; text-align:center;" id="toggle-btn-${item.id}">
+          🎬 Mostra Animazione Movimento
+        </button>
+        <div id="gif-container-${item.id}" style="display:none; text-align:center; margin-bottom:12px;">
+          <img src="${item.gifUrl}" alt="${item.esercizio}" style="width:100%; max-width:280px; border-radius:12px; border:1px solid #E5E7EB; box-shadow:0 2px 8px rgba(0,0,0,0.05);" loading="lazy">
+        </div>
+      ` : ''}
+
       ${!isInfoBlock ? `
         <div class="tracker-row">
           <input type="number" id="input-${item.id}" placeholder="Kg oggi" value="${ultimoPeso}">
@@ -124,6 +278,20 @@ function caricaScheda() {
       ` : ''}
     `;
     container.appendChild(card);
+
+    if (item.gifUrl) {
+      document.getElementById(`toggle-btn-${item.id}`).addEventListener("click", () => {
+        const box = document.getElementById(`gif-container-${item.id}`);
+        const btn = document.getElementById(`toggle-btn-${item.id}`);
+        if (box.style.display === "none") {
+          box.style.display = "block";
+          btn.textContent = "🙈 Nascondi Animazione";
+        } else {
+          box.style.display = "none";
+          btn.textContent = "🎬 Mostra Animazione Movimento";
+        }
+      });
+    }
 
     if (!isInfoBlock) {
       document.getElementById(`btn-save-${item.id}`).addEventListener("click", () => salvaCarico(item.id));
