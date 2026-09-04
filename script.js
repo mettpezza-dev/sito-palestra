@@ -145,6 +145,7 @@ function caricaScheda() {
         <div class="tracker-row">
           <input type="number" id="input-${item.id}" placeholder="Kg oggi" value="${ultimoPeso}">
           <button class="btn-save" id="btn-save-${item.id}">Salva Serie & Timer ⏱️</button>
+          <button type="button" class="btn-reset-serie" onclick="resettaSerieEsercizio('${esercizio.id}')" title="Annulla/Resetta serie" style="background:#f3f4f6; border:1px solid #d1d5db; border-radius:50%; width:32px; height:32px; cursor:pointer; margin-left:8px; font-size:16px;">↺</button>
         </div>
         
         <div style="margin-top:8px;">
@@ -451,3 +452,29 @@ END:VCALENDAR`;
     document.body.removeChild(link);
   }
 });
+
+/* --- FUNZIONE PER ANNULLARE / RESETTARE LA SERIE --- */
+window.resettaSerieEsercizio = function(esercizioId) {
+  // 1. Resetta i dati della serie salvata se presenti in appData o nello stato locale
+  if (typeof appData !== 'undefined' && appData.esercizi && appData.esercizi[esercizioId]) {
+    appData.esercizi[esercizioId].serieCompletate = 0;
+  }
+
+  // 2. Ferma il timer se attivo
+  if (typeof timerInterval !== 'undefined' && timerInterval) {
+    clearInterval(timerInterval);
+  }
+  const timerBox = document.getElementById("timer-box");
+  if (timerBox) {
+    timerBox.style.display = "none";
+  }
+
+  // 3. Ricarica la lista per aggiornare il conteggio visivo delle serie
+  if (typeof renderEsercizi === 'function') {
+    renderEsercizi();
+  } else if (typeof renderWorkout === 'function') {
+    renderWorkout();
+  } else {
+    location.reload(); // Rinfresca se la funzione di render ha un altro nome
+  }
+};
