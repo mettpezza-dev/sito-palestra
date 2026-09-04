@@ -3,48 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FitTracker - Scheda Personalizzata</title>
+  <title>FitTracker Pro</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
+  <!-- SCHERMATA LOGIN -->
   <div id="login-container" class="card">
     <div class="header-logo">
       <div class="icon">💪</div>
-      <h2>Area Riservata</h2>
-      <p>Accedi per consultare la tua scheda</p>
+      <h2>FitTracker Pro</h2>
+      <p>Seleziona il tuo profilo ed accedi</p>
     </div>
     <form id="login-form">
       <div class="input-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" placeholder="Inserisci il tuo nome" required>
+        <label for="role">Ruolo</label>
+        <select id="role">
+          <option value="atleta">Atleta (Ragazza)</option>
+          <option value="admin">Admin (Coach)</option>
+        </select>
       </div>
       <div class="input-group">
         <label for="password">Password</label>
         <input type="password" id="password" placeholder="••••••••" required>
       </div>
-      <button type="submit" class="btn-primary">Accedi al Workout</button>
+      <button type="submit" class="btn-primary">Accedi</button>
     </form>
     <p id="login-error" class="error"></p>
   </div>
 
-  <div id="dashboard" class="card hidden">
+  <!-- VISTA ATLETA -->
+  <div id="dashboard-atleta" class="card hidden">
     <div class="dash-header">
       <div>
-        <span class="badge">Aumento Massa Magra</span>
-        <h2>Total Body - Fase 1</h2>
+        <span class="badge">Atleta</span>
+        <h2>Scheda Total Body</h2>
       </div>
-      <button id="logout-btn" class="btn-secondary">Esci</button>
+      <button class="logout-btn btn-secondary">Esci</button>
     </div>
 
     <div class="progress-info">
-      💡 <strong>Nota:</strong> Inserisci i carichi usati ad ogni allenamento. I dati verranno salvati automaticamente.
+      📈 Inserisci i carichi completati per ogni sessione per tracciare la progressione.
     </div>
 
     <div id="workout-list"></div>
   </div>
 
+  <!-- VISTA ADMIN (COACH) -->
+  <div id="dashboard-admin" class="card hidden">
+    <div class="dash-header">
+      <div>
+        <span class="badge badge-admin">Coach Admin</span>
+        <h2>Gestione Scheda</h2>
+      </div>
+      <button class="logout-btn btn-secondary">Esci</button>
+    </div>
+
+    <form id="add-exercise-form" class="admin-box">
+      <h3>Aggiungi / Aggiorna Esercizio</h3>
+      <input type="text" id="ex-name" placeholder="Nome Esercizio (es. Leg Press)" required>
+      <div class="row">
+        <input type="text" id="ex-sets" placeholder="Serie (es. 3)" required>
+        <input type="text" id="ex-reps" placeholder="Reps (es. 10-12)" required>
+      </div>
+      <input type="text" id="ex-rest" placeholder="Recupero (es. 90s)" required>
+      <button type="submit" class="btn-primary">Salva in Scheda</button>
+    </form>
+
+    <div id="admin-workout-list"></div>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
