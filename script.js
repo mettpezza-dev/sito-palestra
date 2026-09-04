@@ -452,29 +452,3 @@ END:VCALENDAR`;
     document.body.removeChild(link);
   }
 });
-
-/* --- FUNZIONE PER ANNULLARE / RESETTARE LA SERIE --- */
-window.resettaSerieEsercizio = function(esercizioId) {
-  // 1. Resetta i dati della serie salvata se presenti in appData o nello stato locale
-  if (typeof appData !== 'undefined' && appData.esercizi && appData.esercizi[esercizioId]) {
-    appData.esercizi[esercizioId].serieCompletate = 0;
-  }
-
-  // 2. Ferma il timer se attivo
-  if (typeof timerInterval !== 'undefined' && timerInterval) {
-    clearInterval(timerInterval);
-  }
-  const timerBox = document.getElementById("timer-box");
-  if (timerBox) {
-    timerBox.style.display = "none";
-  }
-
-  // 3. Ricarica la lista per aggiornare il conteggio visivo delle serie
-  if (typeof renderEsercizi === 'function') {
-    renderEsercizi();
-  } else if (typeof renderWorkout === 'function') {
-    renderWorkout();
-  } else {
-    location.reload(); // Rinfresca se la funzione di render ha un altro nome
-  }
-};
