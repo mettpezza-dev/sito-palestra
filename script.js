@@ -222,7 +222,10 @@ document.getElementById("stop-timer-btn").addEventListener("click", () => {
 function apriGrafico(id, nomeEsercizio) {
   const modal = document.getElementById("chart-modal");
   document.getElementById("chart-title").textContent = `Progressione: ${nomeEsercizio}`;
+  
+  // Rimuove la classe hidden e mostra il pop-up solo al click
   modal.classList.remove("hidden");
+  modal.style.display = "flex";
 
   const storia = appData.storicoCarichi[id] || [];
   const date = storia.map(h => h.data);
@@ -230,7 +233,9 @@ function apriGrafico(id, nomeEsercizio) {
 
   const ctx = document.getElementById("progressionChart").getContext("2d");
   
-  if (chartInstance) chartInstance.destroy();
+  if (chartInstance) {
+    chartInstance.destroy();
+  }
 
   chartInstance = new Chart(ctx, {
     type: 'line',
@@ -249,6 +254,7 @@ function apriGrafico(id, nomeEsercizio) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       scales: {
         y: { beginAtZero: false }
       }
@@ -256,8 +262,11 @@ function apriGrafico(id, nomeEsercizio) {
   });
 }
 
+// Chiusura grafico
 document.getElementById("close-chart-btn").addEventListener("click", () => {
-  document.getElementById("chart-modal").classList.add("hidden");
+  const modal = document.getElementById("chart-modal");
+  modal.classList.add("hidden");
+  modal.style.display = "none";
 });
 
 /* CALENDARIO */
