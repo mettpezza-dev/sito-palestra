@@ -7,10 +7,15 @@
   --text-muted: #6B7280;
   --border: #E5E7EB;
   --success: #10B981;
-  --admin-color: #D97706;
+  --success-light: #D1FAE5;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
 
 body {
   background-color: var(--bg-color);
@@ -35,20 +40,32 @@ body {
 
 .header-logo { text-align: center; margin-bottom: 24px; }
 .header-logo .icon { font-size: 40px; margin-bottom: 8px; }
+.header-logo h2 { font-size: 22px; font-weight: 700; }
+.header-logo p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
 
-.input-group { margin-bottom: 16px; display: flex; flex-direction: column; }
-.input-group label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+.input-group {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+}
 
-input, select {
-  padding: 12px;
+.input-group label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+input {
+  padding: 12px 14px;
   border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 15px;
-  margin-bottom: 8px;
+  outline: none;
 }
 
-.row { display: flex; gap: 8px; }
-.row input { width: 50%; }
+input:focus { border-color: var(--primary); }
 
 .btn-primary {
   width: 100%;
@@ -57,6 +74,7 @@ input, select {
   color: white;
   border: none;
   border-radius: 8px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -67,8 +85,18 @@ input, select {
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 13px;
-  color: var(--text-muted);
   cursor: pointer;
+  color: var(--text-muted);
+}
+
+.error { color: #EF4444; font-size: 13px; margin-top: 12px; text-align: center; }
+
+/* Dashboard Styling */
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
 }
 
 .badge {
@@ -81,29 +109,173 @@ input, select {
   text-transform: uppercase;
 }
 
-.badge-admin { background: #FEF3C7; color: var(--admin-color); }
-
-.exercise-card {
+/* SEZIONE CALENDARIO */
+.calendar-section {
+  background: #FAFAFA;
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 16px;
+  margin-bottom: 20px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.calendar-header h3 {
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.count-badge {
+  font-size: 12px;
+  background: #E0E7FF;
+  color: var(--primary);
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.calendar-grid-header, .calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+
+.calendar-grid-header {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.day-cell {
+  padding: 8px 0;
+  font-size: 13px;
+  border-radius: 6px;
+  background: white;
+  border: 1px solid var(--border);
+}
+
+.day-cell.empty {
+  background: transparent;
+  border: none;
+}
+
+.day-cell.today {
+  border-color: var(--primary);
+  font-weight: 700;
+}
+
+.day-cell.worked-out {
+  background-color: var(--success);
+  color: white;
+  border-color: var(--success);
+  font-weight: 700;
+}
+
+.calendar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.btn-complete {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--success);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-complete.done {
+  background-color: #6B7280;
+}
+
+.btn-ics {
+  width: 100%;
+  padding: 9px;
+  background-color: white;
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.progress-info {
+  background: #F9FAFB;
+  border-left: 4px solid var(--primary);
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-radius: 0 8px 8px 0;
   margin-bottom: 16px;
+}
+
+/* Card Esercizio */
+.exercise-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
   background: #FAFAFA;
 }
 
-.exercise-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-.exercise-specs { display: flex; gap: 12px; font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
-
-.tracker-row { display: flex; gap: 10px; align-items: center; }
-.history-list { font-size: 12px; color: var(--text-muted); margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 8px; }
-
-.admin-box {
-  background: #FFFBEB;
-  border: 1px solid #FCD34D;
-  padding: 16px;
-  border-radius: 12px;
-  margin-bottom: 20px;
+.exercise-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
 }
-.admin-box h3 { font-size: 14px; margin-bottom: 10px; color: var(--admin-color); }
 
-.error { color: #EF4444; font-size: 13px; margin-top: 12px; text-align: center; }
+.exercise-specs {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.tracker-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.tracker-row input {
+  width: 90px;
+  background: white;
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
+.btn-save {
+  padding: 9px 14px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  flex: 1;
+}
+
+.saved-tag {
+  font-size: 11px;
+  color: var(--success);
+  font-weight: 600;
+  margin-top: 4px;
+  display: block;
+}
