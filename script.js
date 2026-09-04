@@ -256,6 +256,10 @@ function caricaScheda() {
     let htmlStorico = storia.slice(-3).reverse().map(h => `<small style="display:block; color:#6B7280;">📅 ${h.data}: <strong>${h.kg} kg</strong></small>`).join("");
 
     const isInfoBlock = item.id.includes("warmup") || item.id.includes("cooldown");
+    
+    // Genera la ricerca automatica dell'esecuzione perfetta su YouTube
+    const querySearch = encodeURIComponent(item.esercizio + " esecuzione corretta biomeccanica");
+    const videoSearchUrl = `https://www.youtube.com/results?search_query=${querySearch}`;
 
     const card = document.createElement("div");
     card.className = "exercise-card";
@@ -268,14 +272,11 @@ function caricaScheda() {
       </div>
       ${item.descrizione ? `<p style="font-size:12px; color:#4B5563; margin-top:6px; margin-bottom:8px; line-height:1.4;">📖 <em>${item.descrizione}</em></p>` : ''}
       
-      ${item.gifUrl ? `
-        <button class="btn-toggle-gif" style="background:#EEF2FF; color:#4F46E5; border:1px solid #C7D2FE; padding:6px 12px; border-radius:8px; font-weight:600; font-size:12px; cursor:pointer; margin-bottom:10px; width:100%; text-align:center;" id="toggle-btn-${item.id}">
-          🎬 Mostra Animazione Movimento
-        </button>
-        <div id="gif-container-${item.id}" style="display:none; text-align:center; margin-bottom:12px;">
-          <img src="${item.gifUrl}" alt="${item.esercizio}" style="width:100%; max-width:280px; border-radius:12px; border:1px solid #E5E7EB; box-shadow:0 2px 8px rgba(0,0,0,0.05);" loading="lazy">
-        </div>
-      ` : ''}
+      <div style="margin-bottom:12px;">
+        <a href="${videoSearchUrl}" target="_blank" style="display:block; width:100%; text-align:center; background:#4F46E5; color:white; font-weight:600; font-size:12px; padding:8px 0; border-radius:8px; text-decoration:none;">
+          🎬 Guarda Video Esecuzione e Angoli ➔
+        </a>
+      </div>
 
       ${!isInfoBlock ? `
         <div class="tracker-row">
@@ -287,25 +288,13 @@ function caricaScheda() {
     `;
     container.appendChild(card);
 
-    if (item.gifUrl) {
-      document.getElementById(`toggle-btn-${item.id}`).addEventListener("click", () => {
-        const box = document.getElementById(`gif-container-${item.id}`);
-        const btn = document.getElementById(`toggle-btn-${item.id}`);
-        if (box.style.display === "none") {
-          box.style.display = "block";
-          btn.textContent = "🙈 Nascondi Animazione";
-        } else {
-          box.style.display = "none";
-          btn.textContent = "🎬 Mostra Animazione Movimento";
-        }
-      });
-    }
-
     if (!isInfoBlock) {
       document.getElementById(`btn-save-${item.id}`).addEventListener("click", () => salvaCarico(item.id));
     }
   });
 }
+
+
 
 async function salvaCarico(id) {
   const valore = document.getElementById(`input-${id}`).value;
