@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitTracker - Pannello Admin</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div id="login-container" class="card">
+    <div class="header-logo">
+      <div class="icon">⚙️</div>
+      <h2>Accesso Admin</h2>
+      <p>Gestione Scheda e Progrezione</p>
+    </div>
+    <form id="admin-login-form">
+      <div class="input-group">
+        <label>Password Admin</label>
+        <input type="password" id="admin-pass" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn-primary">Accedi al Pannello</button>
+    </form>
+    <p id="admin-error" class="error"></p>
+  </div>
+
+  <div id="admin-dashboard" class="card hidden">
+    <div class="dash-header">
+      <h2>Gestione Esercizi</h2>
+      <button id="admin-logout" class="btn-secondary">Esci</button>
+    </div>
+
+    <div id="admin-exercise-list"></div>
+
+    <button id="add-ex-btn" class="btn-ics" style="margin-bottom: 15px;">➕ Aggiungi Esercizio</button>
+    <button id="save-scheda-btn" class="btn-primary">💾 Salva Nuova Scheda nel Cloud</button>
+    <p id="admin-success" class="saved-tag" style="text-align: center; margin-top: 10px;"></p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAtTmXvO-Yw3QPVdYoJHzpD9fxkSa7Lh38",
+      authDomain: "sito-palestra-cc12b.firebaseapp.com",
+      projectId: "sito-palestra-cc12b",
+      storageBucket: "sito-palestra-cc12b.firebasestorage.app",
+      messagingSenderId: "1013413987903",
+      appId: "1:1013413987903:web:4637a92569a50c78fbda8a"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const docRef = doc(db, "utenti", "ragazza_data");
+
+    let schedaCorrente = [];
+
+    document.getElementById("admin-login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (document.getElementById("admin-pass").value === "admin2026") {
+        document.getElementById("login-container").classList.add("hidden");
+        document.getElementById("admin-dashboard").classList.remove("hidden");
+        const snap = await getDoc(docRef);
+        if (snap.exists() && snap.data().scheda) {
+          schedaCorrente = snap.data().scheda;
+        } else {
+          schedaCorrente = [
+            { id: "ex1", esercizio: "Leg Press 45°", serie: "3", rep: "10-12", recupero: "90s", target: "+1kg ogni 2 settimane" },
+            { id: "ex2", esercizio: "Lat Machine avanti", serie: "3", rep: "10-12", recupero: "90s", target: "Aumenta reps prima del peso" }
+          ];
+        }
+        renderAdminList();
+      } else {
+        document.getElementById("admin-error").textContent = "Password errata!";
+      }
+    });
+
+    function renderAdminList() {
+      const container = document.getElementById("admin-exercise-list");
+      container.innerHTML = "";
+      schedaCorrente.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "exercise-card";
+        div.innerHTML = `
+          <div class="input-group"><label>Nome Esercizio</label><input type="text" value="${item.esercizio}" onchange="updateEx(${index}, 'esercizio', this.value)"></div>
+          <div style="display:flex; gap:10px;">
+            <div class="input-group"><label>Serie</label><input type="text" value="${item.serie}" onchange="updateEx(${index}, 'serie', this.value)"></div>
+            <div class="input-group"><label>Reps</label><input type="text" value="${item.rep}" onchange="updateEx(${index}, 'rep', this.value)"></div>
+          </div>
+          <div class="input-group"><label>Obiettivo/Progressione</label><input type="text" value="${item.target || ''}" placeholder="Es: Metti +2kg appena fai 12 reps" onchange="updateEx(${index}, 'target', this.value)"></div>
+          <button onclick="deleteEx(${index})" style="background:#EF4444; color:white; border:none; padding:6px; border-radius:6px; font-size:11px;">Elimina</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    window.updateEx = (index, field, val) => { schedaCorrente[index][field] = val; };
+    window.deleteEx = (index) => { schedaCorrente.splice(index, 1); renderAdminList(); };
+
+    document.getElementById("add-ex-btn").addEventListener("click", () => {
+      schedaCorrente.push({ id: "ex_" + Date.now(), esercizio: "Nuovo Esercizio", serie: "3", rep: "10", recupero: "90s", target: "" });
+      renderAdminList();
+    });
+
+    document.getElementById("save-scheda-btn").addEventListener("click", async () => {
+      const snap = await getDoc(docRef);
+      const data = snap.exists() ? snap.data() : {};
+      data.scheda = schedaCorrente;
+      await setDoc(docRef, data);
+      document.getElementById("admin-success").textContent = "✓ Nuova scheda salvata online!";
+      setTimeout(() => { document.getElementById("admin-success").textContent = ""; }, 3000);
+    });
+
+    document.getElementById("admin-logout").addEventListener("click", () => { location.reload(); });
+  </script>
+</body>
+</html>
