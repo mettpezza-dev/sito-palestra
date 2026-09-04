@@ -429,3 +429,58 @@ input:focus { border-color: var(--primary); }
   margin-top: 2px;
   font-weight: bold;
 }
+
+/* STILI GRAFICI PULSANTI E TAB */
+.tabs-container {
+  display: flex;
+  gap: 8px;
+  background: #E5E7EB;
+  padding: 4px;
+  border-radius: 12px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #4B5563;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+  background: #4F46E5 !important;
+  color: white !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-action-day {
+  background: #EEF2FF;
+  color: #4F46E5;
+  border: 1px solid #C7D2FE;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-action-day:hover {
+  background: #E0E7FF;
+}
+
+.btn-danger-sm {
+  background: #FEE2E2;
+  color: #DC2626;
+  border: 1px solid #FCA5A5;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
