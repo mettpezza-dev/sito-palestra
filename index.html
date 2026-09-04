@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitTracker - Scheda Personalizzata</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div id="login-container" class="card">
+    <div class="header-logo">
+      <div class="icon">💪</div>
+      <h2>Area Riservata</h2>
+      <p>Accedi per consultare la tua scheda</p>
+    </div>
+    <form id="login-form">
+      <div class="input-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Inserisci il tuo nome" required>
+      </div>
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn-primary">Accedi al Workout</button>
+    </form>
+    <p id="login-error" class="error"></p>
+  </div>
+
+  <div id="dashboard" class="card hidden">
+    <div class="dash-header">
+      <div>
+        <span class="badge">Aumento Massa Magra</span>
+        <h2>Total Body - Fase 1</h2>
+      </div>
+      <button id="logout-btn" class="btn-secondary">Esci</button>
+    </div>
+
+    <div class="progress-info">
+      💡 <strong>Nota:</strong> Inserisci i carichi usati ad ogni allenamento. I dati verranno salvati automaticamente.
+    </div>
+
+    <div id="workout-list"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
