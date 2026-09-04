@@ -3,80 +3,72 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FitTracker Pro</title>
+  <title>FitTracker - Scheda & Calendario Cloud</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <!-- SCHERMATA LOGIN -->
+  <!-- LOGIN CARD -->
   <div id="login-container" class="card">
     <div class="header-logo">
       <div class="icon">💪</div>
-      <h2>FitTracker Pro</h2>
-      <p>Seleziona il tuo profilo ed accedi</p>
+      <h2>Area Riservata</h2>
+      <p>Accedi per la tua scheda di allenamento</p>
     </div>
     <form id="login-form">
       <div class="input-group">
-        <label for="role">Ruolo</label>
-        <select id="role">
-          <option value="atleta">Atleta (Ragazza)</option>
-          <option value="admin">Admin (Coach)</option>
-        </select>
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="Inserisci il tuo nome" required>
       </div>
       <div class="input-group">
         <label for="password">Password</label>
         <input type="password" id="password" placeholder="••••••••" required>
       </div>
-      <button type="submit" class="btn-primary">Accedi</button>
+      <button type="submit" class="btn-primary">Accedi al Workout</button>
     </form>
     <p id="login-error" class="error"></p>
   </div>
 
-  <!-- VISTA ATLETA -->
-  <div id="dashboard-atleta" class="card hidden">
+  <!-- DASHBOARD WORKOUT -->
+  <div id="dashboard" class="card hidden">
     <div class="dash-header">
       <div>
-        <span class="badge">Atleta</span>
-        <h2>Scheda Total Body</h2>
+        <span class="badge">Aumento Massa Magra</span>
+        <h2>Total Body - Fase 1</h2>
       </div>
-      <button class="logout-btn btn-secondary">Esci</button>
+      <button id="logout-btn" class="btn-secondary">Esci</button>
+    </div>
+
+    <!-- SEZIONE CALENDARIO -->
+    <div class="calendar-section">
+      <div class="calendar-header">
+        <h3 id="calendar-month-year">Mese Anno</h3>
+        <span id="workout-count" class="count-badge">0 allenamenti</span>
+      </div>
+      
+      <div class="calendar-grid-header">
+        <div>Lun</div><div>Mar</div><div>Mer</div><div>Gio</div><div>Ven</div><div>Sab</div><div>Dom</div>
+      </div>
+      <div id="calendar-days" class="calendar-grid"></div>
+
+      <div class="calendar-actions">
+        <button id="complete-btn" class="btn-complete">
+          ✅ Completa Allenamento Oggi
+        </button>
+        <button id="export-ics-btn" class="btn-ics">
+          📲 Aggiungi a Calendario iPhone
+        </button>
+      </div>
     </div>
 
     <div class="progress-info">
-      📈 Inserisci i carichi completati per ogni sessione per tracciare la progressione.
+      ☁️ <strong>Sincronizzato sul Cloud:</strong> I tuoi carichi e il calendario sono salvati su Firebase.
     </div>
 
     <div id="workout-list"></div>
   </div>
 
-  <!-- VISTA ADMIN (COACH) -->
-  <div id="dashboard-admin" class="card hidden">
-    <div class="dash-header">
-      <div>
-        <span class="badge badge-admin">Coach Admin</span>
-        <h2>Gestione Scheda</h2>
-      </div>
-      <button class="logout-btn btn-secondary">Esci</button>
-    </div>
-
-    <form id="add-exercise-form" class="admin-box">
-      <h3>Aggiungi / Aggiorna Esercizio</h3>
-      <input type="text" id="ex-name" placeholder="Nome Esercizio (es. Leg Press)" required>
-      <div class="row">
-        <input type="text" id="ex-sets" placeholder="Serie (es. 3)" required>
-        <input type="text" id="ex-reps" placeholder="Reps (es. 10-12)" required>
-      </div>
-      <input type="text" id="ex-rest" placeholder="Recupero (es. 90s)" required>
-      <button type="submit" class="btn-primary">Salva in Scheda</button>
-    </form>
-
-    <div id="admin-workout-list"></div>
-  </div>
-
-  <!-- Firebase Scripts -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
