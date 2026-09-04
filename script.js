@@ -18,6 +18,7 @@ let schedaVistaCorrente = "Giorno 1";
 let dataSelezionata = new Date().toISOString().split('T')[0];
 let timerInterval = null;
 let chartInstance = null;
+let serieCompletate = {}; // Traccia le serie per esercizio
 
 let appData = {
   schede: {
@@ -86,10 +87,10 @@ async function salvaDatiFirebase() {
   try { await setDoc(docRef, appData); } catch (e) { console.error("Errore salvataggio:", e); }
 }
 
-window.cambiaSchedaVista = (giorno) => {
+window.cambiaSchedaVista = (giorno, element) => {
   schedaVistaCorrente = giorno;
   document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
-  if (event && event.target) event.target.classList.add("active");
+  if (element) element.classList.add("active");
   document.getElementById("current-tab-label").textContent = giorno;
   caricaScheda();
 };
@@ -104,6 +105,8 @@ function caricaScheda() {
     const storia = appData.storicoCarichi[item.id] || [];
     const ultimoPeso = storia.length > 0 ? storia[storia.length - 1].kg : "";
     const notaCorrente = appData.noteEsercizi ? (appData.noteEsercizi[item.id] || "") : "";
+    const fatte = serieCompletate[item.id] || 0;
+    const totali = parseInt(item.serie) || 1;
 
     let htmlStorico = storia.slice(-3).reverse().map(h => `<small style="display:block; color:#6B7280;">📅 ${h.data}: <strong>${h.kg} kg</strong></small>`).join("");
 
@@ -132,9 +135,16 @@ function caricaScheda() {
       </div>
 
       ${!isInfoBlock ? `
+        <div style="background:#F9FAFB; padding:8px; border-radius:8px; margin-bottom:8px; border:1px solid #E5E7EB;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:600; color:#374151; margin-bottom:4px;">
+            <span>Progresso Serie:</span>
+            <span id="series-count-${item.id}" style="color:#4F46E5;">${fatte} di ${totali} completate</span>
+          </div>
+        </div>
+
         <div class="tracker-row">
           <input type="number" id="input-${item.id}" placeholder="Kg oggi" value="${ultimoPeso}">
-          <button class="btn-save" id="btn-save-${item.id}">Salva e Timer ⏱️</button>
+          <button class="btn-save" id="btn-save-${item.id}">Salva Serie & Timer ⏱️</button>
         </div>
         
         <div style="margin-top:8px;">
@@ -147,7 +157,7 @@ function caricaScheda() {
     container.appendChild(card);
 
     if (!isInfoBlock) {
-      document.getElementById(`btn-save-${item.id}`).addEventListener("click", () => salvaCaricoETimer(item.id, item.recupero));
+      document.getElementById(`btn-save-${item.id}`).addEventListener("click", () => salvaCaricoETimer(item.id, item.recupero, totali));
       document.getElementById(`btn-chart-${item.id}`).addEventListener("click", () => apriGrafico(item.id, item.esercizio));
       
       document.getElementById(`note-${item.id}`).addEventListener("change", async (e) => {
@@ -159,22 +169,61 @@ function caricaScheda() {
   });
 }
 
-async function salvaCaricoETimer(id, recuperoStr) {
+async function salvaCaricoETimer(id, recuperoStr, totaliSerie) {
   const valore = document.getElementById(`input-${id}`).value;
+  
+  // Incrementa contatore serie
+  if (!serieCompletate[id]) serieCompletate[id] = 0;
+  serieCompletate[id] += 1;
+
+  const countLabel = document.getElementById(`series-count-${id}`);
+  if (countLabel) {
+    const rimaste = totaliSerie - serieCompletate[id];
+    countLabel.textContent = serieCompletate[id] >= totaliSerie 
+      ? `✅ Completato (${totaliSerie}/${totaliSerie})` 
+      : `${serieCompletate[id]} di ${totaliSerie} completate (mancano ${rimaste})`;
+  }
+
   if (valore !== "") {
     if (!appData.storicoCarichi[id]) appData.storicoCarichi[id] = [];
     appData.storicoCarichi[id].push({ data: dataSelezionata, kg: valore });
     await salvaDatiFirebase();
-    caricaScheda();
   }
 
   let secondi = parseInt(recuperoStr);
   if (isNaN(secondi)) secondi = 90;
 
-  avviaTimer(secondi);
+  avviaTimer(secondi, serieCompletate[id], totaliSerie);
 }
 
-function avviaTimer(secondi) {
+// Funzione Suono Acustico Forte
+function riproduciSuonoFineTimer() {
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const playBeep = (freq, delay, duration) => {
+      setTimeout(() => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      }, delay);
+    };
+
+    // 3 Bip di completamento
+    playBeep(880, 0, 0.2);
+    playBeep(880, 300, 0.2);
+    playBeep(1200, 600, 0.4);
+  } catch (e) {
+    console.error("Audio non supportato:", e);
+  }
+}
+
+function avviaTimer(secondi, serieAttuale, totaliSerie) {
   clearInterval(timerInterval);
   const timerBox = document.getElementById("timer-box");
   const display = document.getElementById("timer-display");
@@ -196,16 +245,10 @@ function avviaTimer(secondi) {
       aggiornaDisplay();
     } else {
       clearInterval(timerInterval);
-      display.textContent = "FINE! 🎉";
-      try {
-        let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        let osc = audioCtx.createOscillator();
-        osc.connect(audioCtx.destination);
-        osc.frequency.value = 880;
-        osc.start();
-        setTimeout(() => osc.stop(), 500);
-      } catch (e) {}
-      setTimeout(() => { timerBox.style.display = "none"; }, 3000);
+      display.textContent = "RECUPERO FINITO! 🔥";
+      riproduciSuonoFineTimer();
+
+      setTimeout(() => { timerBox.style.display = "none"; }, 3500);
     }
   }, 1000);
 }
