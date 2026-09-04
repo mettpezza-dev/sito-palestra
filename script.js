@@ -103,12 +103,14 @@ function caricaScheda() {
 
   listaEsercizi.forEach(item => {
     const storia = appData.storicoCarichi[item.id] || [];
-    const ultimoPeso = storia.length > 0 ? storia[storia.length - 1].kg : "";
+    const ultimoLog = storia.length > 0 ? storia[storia.length - 1] : null;
+    const ultimoPeso = ultimoLog ? ultimoLog.kg : "";
+    const ultimoRir = ultimoLog && ultimoLog.rir !== undefined ? ultimoLog.rir : 1;
     const notaCorrente = appData.noteEsercizi ? (appData.noteEsercizi[item.id] || "") : "";
     const fatte = serieCompletate[item.id] || 0;
     const totali = parseInt(item.serie) || 1;
 
-    let htmlStorico = storia.slice(-3).reverse().map(h => `<small style="display:block; color:#6B7280;">📅 ${h.data}: <strong>${h.kg} kg</strong></small>`).join("");
+    let htmlStorico = storia.slice(-3).reverse().map(h => `<small style="display:block; color:#6B7280;">📅 ${h.data}: <strong>${h.kg} kg</strong> (RIR: ${h.rir !== undefined ? h.rir : '-'})</small>`).join("");
 
     const isInfoBlock = item.id.includes("warmup") || item.id.includes("cooldown");
     const querySearch = encodeURIComponent(item.esercizio + " esecuzione corretta biomeccanica");
@@ -117,20 +119,17 @@ function caricaScheda() {
     // Calcolo Algoritmico della Prossima Sessione (Scientific Autoregulation)
     let suggerimentoHTML = "";
     if (!isInfoBlock && storia.length > 0) {
-      const ultimoLog = storia[storia.length - 1];
+      const pesoAttuale = parseFloat(ultimoPeso);
+      const rirAttuale = parseInt(ultimoRir);
       const penultimoLog = storia.length > 1 ? storia[storia.length - 2] : null;
-      const pesoAttuale = parseFloat(ultimoLog.kg);
-      const rirAttuale = parseInt(ultimoLog.rir ?? 1);
 
       let prossimoCarico = pesoAttuale;
       let messaggio = "";
 
-      // Verifica Plateau (2 sessioni stabili a cedimento RIR 0)
       if (penultimoLog && parseFloat(penultimoLog.kg) === pesoAttuale && rirAttuale === 0 && parseInt(penultimoLog.rir ?? 1) === 0) {
-        prossimoCarico = (pesoAttuale * 0.85).toFixed(1); // Deload -15%
+        prossimoCarico = (pesoAttuale * 0.85).toFixed(1);
         messaggio = `⚠️ <strong>Plateau rilevato</strong>: Consigliato <strong>Deload (-15%)</strong> a <strong>${prossimoCarico} kg</strong> per superare lo stallo.`;
       } else if (rirAttuale >= 2) {
-        // Prossimo step: Aumento del 2.5%
         prossimoCarico = (pesoAttuale * 1.025).toFixed(1);
         messaggio = `🔥 <strong>Progressione</strong>: Prossimo target stimato <strong>${prossimoCarico} kg</strong> (RIR era ≥ 2).`;
       } else {
@@ -172,10 +171,11 @@ function caricaScheda() {
           </div>
         </div>
 
-        <div class="tracker-row">
-          <input type="number" id="input-${item.id}" placeholder="Kg oggi" value="${ultimoPeso}">
-          <button class="btn-save" id="btn-save-${item.id}">Salva Serie & Timer ⏱️</button>
-          <button type="button" class="btn-reset-serie" onclick="resettaSerieEsercizio('${item.id}', ${totali})" title="Annulla/Resetta serie" style="background:#f3f4f6; border:1px solid #d1d5db; border-radius:50%; width:32px; height:32px; cursor:pointer; margin-left:8px; font-size:16px;">↺</button>
+        <div class="tracker-row" style="display: flex; gap: 6px; align-items: center; margin-bottom: 8px;">
+          <input type="number" id="input-kg-${item.id}" placeholder="Kg oggi" value="${ultimoPeso}" style="flex: 2;">
+          <input type="number" id="input-rir-${item.id}" placeholder="RIR" value="${ultimoRir}" style="flex: 1;" min="0" max="5" title="RIR (Ripetizioni in riserva)">
+          <button class="btn-save" id="btn-save-${item.id}" style="flex: 2;">Salva & Timer ⏱️</button>
+          <button type="button" class="btn-reset-serie" onclick="resettaSerieEsercizio('${item.id}', ${totali})" title="Annulla serie" style="background:#f3f4f6; border:1px solid #d1d5db; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:16px;">↺</button>
         </div>
         
         ${suggerimentoHTML}
@@ -220,7 +220,8 @@ window.resettaSerieEsercizio = function(id, totali) {
 };
 
 async function salvaCaricoETimer(id, recuperoStr, totaliSerie) {
-  const valore = document.getElementById(`input-${id}`).value;
+  const valoreKg = document.getElementById(`input-kg-${id}`).value;
+  const valoreRir = document.getElementById(`input-rir-${id}`).value;
   
   if (!serieCompletate[id]) serieCompletate[id] = 0;
   serieCompletate[id] += 1;
@@ -233,10 +234,15 @@ async function salvaCaricoETimer(id, recuperoStr, totaliSerie) {
       : `${serieCompletate[id]} di ${totaliSerie} completate (mancano ${rimaste})`;
   }
 
-  if (valore !== "") {
+  if (valoreKg !== "") {
     if (!appData.storicoCarichi[id]) appData.storicoCarichi[id] = [];
-    appData.storicoCarichi[id].push({ data: dataSelezionata, kg: valore });
+    appData.storicoCarichi[id].push({ 
+      data: dataSelezionata, 
+      kg: valoreKg, 
+      rir: parseInt(valoreRir || 1) 
+    });
     await salvaDatiFirebase();
+    caricaScheda(); // Ricarica al volo per mostrare subito il box verde
   }
 
   let secondi = parseInt(recuperoStr);
