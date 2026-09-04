@@ -18,7 +18,7 @@ let schedaVistaCorrente = "Giorno 1";
 let dataSelezionata = new Date().toISOString().split('T')[0];
 let timerInterval = null;
 let chartInstance = null;
-let serieCompletate = {}; // Traccia le serie per esercizio
+let serieCompletate = {};
 
 let appData = {
   schede: {
@@ -114,6 +114,36 @@ function caricaScheda() {
     const querySearch = encodeURIComponent(item.esercizio + " esecuzione corretta biomeccanica");
     const videoSearchUrl = `https://www.youtube.com/results?search_query=${querySearch}`;
 
+    // Calcolo Algoritmico della Prossima Sessione (Scientific Autoregulation)
+    let suggerimentoHTML = "";
+    if (!isInfoBlock && storia.length > 0) {
+      const ultimoLog = storia[storia.length - 1];
+      const penultimoLog = storia.length > 1 ? storia[storia.length - 2] : null;
+      const pesoAttuale = parseFloat(ultimoLog.kg);
+      const rirAttuale = parseInt(ultimoLog.rir ?? 1);
+
+      let prossimoCarico = pesoAttuale;
+      let messaggio = "";
+
+      // Verifica Plateau (2 sessioni stabili a cedimento RIR 0)
+      if (penultimoLog && parseFloat(penultimoLog.kg) === pesoAttuale && rirAttuale === 0 && parseInt(penultimoLog.rir ?? 1) === 0) {
+        prossimoCarico = (pesoAttuale * 0.85).toFixed(1); // Deload -15%
+        messaggio = `⚠️ <strong>Plateau rilevato</strong>: Consigliato <strong>Deload (-15%)</strong> a <strong>${prossimoCarico} kg</strong> per superare lo stallo.`;
+      } else if (rirAttuale >= 2) {
+        // Prossimo step: Aumento del 2.5%
+        prossimoCarico = (pesoAttuale * 1.025).toFixed(1);
+        messaggio = `🔥 <strong>Progressione</strong>: Prossimo target stimato <strong>${prossimoCarico} kg</strong> (RIR era ≥ 2).`;
+      } else {
+        messaggio = `🎯 <strong>Mantenimento</strong>: Mantieni <strong>${pesoAttuale} kg</strong> per la prossima sessione fino a raggiungere RIR ≥ 2.`;
+      }
+
+      suggerimentoHTML = `
+        <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:8px 12px; border-radius:8px; margin-top:8px; font-size:12px; color:#166534;">
+          🧠 <strong>Target Scientifico:</strong> ${messaggio}
+        </div>
+      `;
+    }
+
     const card = document.createElement("div");
     card.className = "exercise-card";
     card.innerHTML = `
@@ -148,6 +178,8 @@ function caricaScheda() {
           <button type="button" class="btn-reset-serie" onclick="resettaSerieEsercizio('${item.id}', ${totali})" title="Annulla/Resetta serie" style="background:#f3f4f6; border:1px solid #d1d5db; border-radius:50%; width:32px; height:32px; cursor:pointer; margin-left:8px; font-size:16px;">↺</button>
         </div>
         
+        ${suggerimentoHTML}
+
         <div style="margin-top:8px;">
           <input type="text" id="note-${item.id}" placeholder="📝 Note macchinario / sensazioni..." value="${notaCorrente}" style="width:100%; padding:6px 10px; font-size:12px; border:1px solid #D1D5DB; border-radius:6px; margin-bottom:6px;">
         </div>
@@ -170,7 +202,6 @@ function caricaScheda() {
   });
 }
 
-/* --- FUNZIONE RESET SERIE & FERMA TIMER --- */
 window.resettaSerieEsercizio = function(id, totali) {
   serieCompletate[id] = 0;
   
@@ -179,7 +210,6 @@ window.resettaSerieEsercizio = function(id, totali) {
     countLabel.textContent = `0 di ${totali} completate`;
   }
 
-  // Ferma il timer se attivo
   if (timerInterval) {
     clearInterval(timerInterval);
   }
@@ -192,7 +222,6 @@ window.resettaSerieEsercizio = function(id, totali) {
 async function salvaCaricoETimer(id, recuperoStr, totaliSerie) {
   const valore = document.getElementById(`input-${id}`).value;
   
-  // Incrementa contatore serie
   if (!serieCompletate[id]) serieCompletate[id] = 0;
   serieCompletate[id] += 1;
 
@@ -216,7 +245,6 @@ async function salvaCaricoETimer(id, recuperoStr, totaliSerie) {
   avviaTimer(secondi, serieCompletate[id], totaliSerie);
 }
 
-// Funzione Suono Acustico Forte
 function riproduciSuonoFineTimer() {
   try {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -234,7 +262,6 @@ function riproduciSuonoFineTimer() {
       }, delay);
     };
 
-    // 3 Bip di completamento
     playBeep(880, 0, 0.2);
     playBeep(880, 300, 0.2);
     playBeep(1200, 600, 0.4);
@@ -326,7 +353,6 @@ document.getElementById("close-chart-btn").addEventListener("click", () => {
   modal.style.display = "none";
 });
 
-/* GENERAZIONE GRIGLIA CALENDARIO QUADRATINI */
 function renderCalendario() {
   const container = document.getElementById("calendar-days");
   if (!container) return;
@@ -420,8 +446,6 @@ window.rimuoviWorkoutInData = async () => {
 
 document.getElementById("logout-btn").addEventListener("click", () => location.reload());
 
-/* --- ESPORTAZIONE CALENDARIO IPHONE (.ICS) --- */
-// Imposta di default la data e ora attuale nel campo di input
 document.addEventListener("DOMContentLoaded", function() {
   const inputDatetime = document.getElementById("calendar-datetime");
   if (inputDatetime) {
@@ -436,11 +460,10 @@ document.addEventListener("click", function(e) {
     const datetimeInput = document.getElementById("calendar-datetime");
     let dataScelta = datetimeInput && datetimeInput.value ? new Date(datetimeInput.value) : new Date();
 
-    // Formattazione data nel formato UTC richiesto da iCalendar (YYYYMMDDTHHMMSSZ)
     const formatICSDate = (d) => d.toISOString().replace(/-|:|\.\d+/g, '');
 
     const start = formatICSDate(dataScelta);
-    const endDate = new Date(dataScelta.getTime() + 60 * 60 * 1000); // Durata 1 ora
+    const endDate = new Date(dataScelta.getTime() + 60 * 60 * 1000);
     const end = formatICSDate(endDate);
 
     const nomeScheda = typeof schedaVistaCorrente !== 'undefined' ? schedaVistaCorrente : 'Allenamento';
