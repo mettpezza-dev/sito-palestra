@@ -14,26 +14,31 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const docRef = doc(db, "utenti", "ragazza_data");
 
-let schedaDefault = [
-  { id: "ex1", esercizio: "Leg Press 45°", serie: "3", rep: "10-12", recupero: "90s", target: "Obiettivo: +1kg quando completi 12 reps nell'ultima serie" },
-  { id: "ex2", esercizio: "Lat Machine avanti", serie: "3", rep: "10-12", recupero: "90s", target: "Obiettivo: Focus sulla contrazione schiena" },
-  { id: "ex3", esercizio: "Push-up facilitati", serie: "3", rep: "8-10", recupero: "90s", target: "Obiettivo: Arriva a 10 reps pulite prima di caricare" },
-  { id: "ex4", esercizio: "Pulley Basso", serie: "3", rep: "10-12", recupero: "90s", target: "Obiettivo: Mantieni petto aperto" },
-  { id: "ex5", esercizio: "Plank addominale", serie: "3", rep: "30 sec", recupero: "60s", target: "Obiettivo: Aumenta di +5 sec ogni settimana" }
-];
+let schedaVistaCorrente = "Giorno 1";
+let dataSelezionata = new Date().toISOString().split('T')[0];
 
 let appData = {
-  scheda: schedaDefault,
-  storicoCarichi: {}, // Struttura: { idEsercizio: [ {data: "2026-09-04", kg: "15"}, ... ] }
-  workouts: []
+  schede: {
+    "Giorno 1": [
+      { id: "g1_ex1", esercizio: "Leg Press 45°", serie: "3", rep: "10-12", recupero: "90s", descrizione: "Focus sui quadricipiti. Spingi con tutto il piede senza staccare i talloni." },
+      { id: "g1_ex2", esercizio: "Lat Machine Avanti", serie: "3", rep: "10-12", recupero: "90s", descrizione: "Tira la sbarra al petto petto in fuori, controlla il ritorno lento." }
+    ],
+    "Giorno 2": [
+      { id: "g2_ex1", esercizio: "Push-up Facilitati", serie: "3", rep: "8-10", recupero: "90s", descrizione: "Mani poco più larghe delle spalle, addome e glutei contratti." },
+      { id: "g2_ex2", esercizio: "Pulley Basso", serie: "3", rep: "10-12", recupero: "90s", descrizione: "Mantieni la schiena dritta e adduci le scapole alla fine del movimento." }
+    ],
+    "Giorno 3": [
+      { id: "g3_ex1", esercizio: "Affondi sul posto", serie: "3", rep: "10", recupero: "90s", descrizione: "Passo lungo, ginocchio posteriore sfiora il pavimento." },
+      { id: "g3_ex2", esercizio: "Plank Addominale", serie: "3", rep: "30 sec", recupero: "60s", descrizione: "Mantenere linea retta testa-bacino-talloni." }
+    ]
+  },
+  storicoCarichi: {},
+  calendarEvents: {} // Struttura: { "2026-09-04": "Giorno 1" }
 };
 
 document.getElementById("login-form").addEventListener("submit", async function(e) {
   e.preventDefault();
-  const user = document.getElementById("username").value;
-  const pass = document.getElementById("password").value;
-
-  if (user === "ragazza" && pass === "gym2026") {
+  if (document.getElementById("username").value === "ragazza" && document.getElementById("password").value === "gym2026") {
     document.getElementById("login-container").classList.add("hidden");
     document.getElementById("dashboard").classList.remove("hidden");
     await caricaDatiFirebase();
@@ -49,22 +54,32 @@ async function caricaDatiFirebase() {
     const snap = await getDoc(docRef);
     if (snap.exists()) {
       const data = snap.data();
-      if (data.scheda && data.scheda.length > 0) appData.scheda = data.scheda;
+      if (data.schede) appData.schede = data.schede;
       if (data.storicoCarichi) appData.storicoCarichi = data.storicoCarichi;
-      if (data.workouts) appData.workouts = data.workouts;
+      if (data.calendarEvents) appData.calendarEvents = data.calendarEvents;
     }
-  } catch (e) { console.error("Errore Firebase:", e); }
+  } catch (e) { console.error("Errore caricamento:", e); }
 }
 
 async function salvaDatiFirebase() {
   try { await setDoc(docRef, appData); } catch (e) { console.error("Errore salvataggio:", e); }
 }
 
+window.cambiaSchedaVista = (giorno) => {
+  schedaVistaCorrente = giorno;
+  document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+  event.target.classList.add("active");
+  document.getElementById("current-tab-label").textContent = giorno;
+  caricaScheda();
+};
+
 function caricaScheda() {
   const container = document.getElementById("workout-list");
   container.innerHTML = "";
 
-  appData.scheda.forEach(item => {
+  const listaEsercizi = appData.schede[schedaVistaCorrente] || [];
+
+  listaEsercizi.forEach(item => {
     const storia = appData.storicoCarichi[item.id] || [];
     const ultimoPeso = storia.length > 0 ? storia[storia.length - 1].kg : "";
 
@@ -77,14 +92,14 @@ function caricaScheda() {
       <div class="exercise-specs">
         <span>🔄 ${item.serie} Serie</span>
         <span>🎯 ${item.rep} Reps</span>
+        <span>⏱️ ${item.recupero}</span>
       </div>
-      ${item.target ? `<div style="font-size:11px; color:#4F46E5; font-weight:600; margin-bottom:8px;">🎯 ${item.target}</div>` : ''}
+      ${item.descrizione ? `<p style="font-size:12px; color:#4B5563; margin-bottom:8px; line-height:1.4;">📖 <em>${item.descrizione}</em></p>` : ''}
       <div class="tracker-row">
         <input type="number" id="input-${item.id}" placeholder="Kg oggi" value="${ultimoPeso}">
-        <button class="btn-save" id="btn-save-${item.id}">Salva Sessione</button>
+        <button class="btn-save" id="btn-save-${item.id}">Salva Peso</button>
       </div>
       <div style="margin-top:8px;">${htmlStorico}</div>
-      <span id="msg-${item.id}" class="saved-tag"></span>
     `;
     container.appendChild(card);
 
@@ -95,15 +110,14 @@ function caricaScheda() {
 async function salvaCarico(id) {
   const valore = document.getElementById(`input-${id}`).value;
   if (valore !== "") {
-    const today = new Date().toISOString().split('T')[0];
     if (!appData.storicoCarichi[id]) appData.storicoCarichi[id] = [];
-    
-    appData.storicoCarichi[id].push({ data: today, kg: valore });
+    appData.storicoCarichi[id].push({ data: dataSelezionata, kg: valore });
     await salvaDatiFirebase();
     caricaScheda();
   }
 }
 
+/* LOGICA CALENDARIO DINAMICO INTERATTIVO */
 function renderCalendario() {
   const now = new Date();
   const year = now.getFullYear();
@@ -112,20 +126,9 @@ function renderCalendario() {
   
   document.getElementById("calendar-month-year").textContent = `${monthNames[month]} ${year}`;
 
-  const todayStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   const currentMonthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
-  const monthCount = appData.workouts.filter(d => d.startsWith(currentMonthPrefix)).length;
-  
-  document.getElementById("workout-count").textContent = `${monthCount} allenamenti`;
-
-  const completeBtn = document.getElementById("complete-btn");
-  if (appData.workouts.includes(todayStr)) {
-    completeBtn.textContent = "✓ Allenamento Oggi Registrato!";
-    completeBtn.classList.add("done");
-  } else {
-    completeBtn.textContent = "✅ Completa Allenamento Oggi";
-    completeBtn.classList.remove("done");
-  }
+  const totalMonthWorkouts = Object.keys(appData.calendarEvents).filter(d => d.startsWith(currentMonthPrefix)).length;
+  document.getElementById("workout-count").textContent = `${totalMonthWorkouts} allenamenti`;
 
   const grid = document.getElementById("calendar-days");
   grid.innerHTML = "";
@@ -144,28 +147,50 @@ function renderCalendario() {
     const dayStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const dayCell = document.createElement("div");
     dayCell.className = "day-cell";
-    dayCell.textContent = day;
+    dayCell.innerHTML = `<span>${day}</span>`;
 
-    if (day === now.getDate()) dayCell.classList.add("today");
-    if (appData.workouts.includes(dayStr)) dayCell.classList.add("worked-out");
+    if (dayStr === dataSelezionata) dayCell.classList.add("selected");
+    
+    if (appData.calendarEvents[dayStr]) {
+      dayCell.classList.add("worked-out");
+      dayCell.innerHTML += `<span class="tag-giorno">${appData.calendarEvents[dayStr]}</span>`;
+    }
 
+    dayCell.addEventListener("click", () => selezionaDataCalendario(dayStr));
     grid.appendChild(dayCell);
   }
+
+  aggiornaUISelezioneData();
 }
 
-async function toggleTodayWorkout() {
-  const now = new Date();
-  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-
-  if (appData.workouts.includes(todayStr)) {
-    appData.workouts = appData.workouts.filter(d => d !== todayStr);
-  } else {
-    appData.workouts.push(todayStr);
-  }
-
-  await salvaDatiFirebase();
+function selezionaDataCalendario(dateStr) {
+  dataSelezionata = dateStr;
   renderCalendario();
 }
 
-document.getElementById("complete-btn").addEventListener("click", toggleTodayWorkout);
+function aggiornaUISelezioneData() {
+  document.getElementById("selected-date-label").textContent = dataSelezionata;
+  const workoutPresente = appData.calendarEvents[dataSelezionata];
+  const removeBtn = document.getElementById("remove-workout-btn");
+
+  if (workoutPresente) {
+    removeBtn.style.display = "block";
+    removeBtn.textContent = `❌ Rimuovi ${workoutPresente} da questa data`;
+  } else {
+    removeBtn.style.display = "none";
+  }
+}
+
+window.registraWorkoutInData = async (giornoNome) => {
+  appData.calendarEvents[dataSelezionata] = giornoNome;
+  await salvaDatiFirebase();
+  renderCalendario();
+};
+
+window.rimuoviWorkoutInData = async () => {
+  delete appData.calendarEvents[dataSelezionata];
+  await salvaDatiFirebase();
+  renderCalendario();
+};
+
 document.getElementById("logout-btn").addEventListener("click", () => location.reload());
