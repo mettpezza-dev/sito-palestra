@@ -216,11 +216,19 @@ async function caricaDatiFirebase() {
     const snap = await getDoc(docRef);
     if (snap.exists()) {
       const data = snap.data();
-      if (data.schede) appData.schede = data.schede;
+      if (data.schede && data.schede["Giorno 1"] && data.schede["Giorno 1"][0].gifUrl) {
+        appData.schede = data.schede;
+      } else {
+        await salvaDatiFirebase();
+      }
       if (data.storicoCarichi) appData.storicoCarichi = data.storicoCarichi;
       if (data.calendarEvents) appData.calendarEvents = data.calendarEvents;
+    } else {
+      await salvaDatiFirebase();
     }
-  } catch (e) { console.error("Errore caricamento:", e); }
+  } catch (e) { 
+    console.error("Errore caricamento:", e); 
+  }
 }
 
 async function salvaDatiFirebase() {
