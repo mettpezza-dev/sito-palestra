@@ -3,87 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FitTracker - Scheda & Calendario Interattivo</title>
+  <title>GioiGym - Fitness Tracker</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4F46E5">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-  <!-- LOGIN CARD -->
   <div id="login-container" class="card">
-    <div class="header-logo">
-      <div class="icon">💪</div>
-      <h2>Area Riservata</h2>
-      <p>Accedi per la tua scheda di allenamento</p>
-    </div>
+    <h2>🔒 Accesso GioiGym</h2>
     <form id="login-form">
-      <div class="input-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" placeholder="Inserisci il tuo nome" required>
-      </div>
-      <div class="input-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" placeholder="••••••••" required>
-      </div>
-      <button type="submit" class="btn-primary">Accedi al Workout</button>
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit" class="btn">Accedi</button>
+      <p id="login-error" class="error"></p>
     </form>
-    <p id="login-error" class="error"></p>
   </div>
 
-  <!-- DASHBOARD WORKOUT -->
-  <div id="dashboard" class="card hidden">
-    <div class="dash-header">
-      <div>
-        <span class="badge">Aumento Massa Magra</span>
-        <h2>Programma 3 Giorni</h2>
-      </div>
-      <button id="logout-btn" class="btn-secondary">Esci</button>
+  <div id="dashboard" class="hidden">
+    <header class="header">
+      <h1>🏋️‍♀️ GioiGym Workout</h1>
+      <button id="logout-btn" class="btn-logout">Logout</button>
+    </header>
+
+    <!-- Timer overlay fisso in alto quando attivo -->
+    <div id="timer-box" style="display:none; position:fixed; top:10px; right:10px; background:#4F46E5; color:white; padding:10px 16px; border-radius:30px; font-weight:bold; box-shadow:0 4px 12px rgba(0,0,0,0.2); z-index:9999; align-items:center; gap:8px;">
+      ⏱️ Recupero: <span id="timer-display">00:00</span>
+      <button id="stop-timer-btn" style="background:transparent; border:none; color:white; font-weight:bold; cursor:pointer; margin-left:8px;">✕</button>
     </div>
 
-    <!-- CALENDARIO INTERATTIVO -->
-    <div class="calendar-section">
-      <div class="calendar-header">
-        <h3 id="calendar-month-year">Mese Anno</h3>
-        <span id="workout-count" class="count-badge">0 allenamenti</span>
-      </div>
-      
-      <div class="calendar-grid-header">
-        <div>Lun</div><div>Mar</div><div>Mer</div><div>Gio</div><div>Ven</div><div>Sab</div><div>Dom</div>
-      </div>
-      <div id="calendar-days" class="calendar-grid"></div>
-
-      <!-- SELEZIONE GIORNO E REGISTRAZIONE -->
-      <div class="calendar-actions">
-        <div class="selected-day-info">
-          <span>Giorno selezionato: <strong id="selected-date-label">Oggi</strong></span>
-        </div>
-        
-        <div class="workout-selector">
-          <label>Segna allenamento svolto:</label>
-          <div class="btn-group">
-            <button class="btn-day-select" onclick="registraWorkoutInData('Giorno 1')">Giorno 1</button>
-            <button class="btn-day-select" onclick="registraWorkoutInData('Giorno 2')">Giorno 2</button>
-            <button class="btn-day-select" onclick="registraWorkoutInData('Giorno 3')">Giorno 3</button>
-          </div>
-          <button id="remove-workout-btn" class="btn-secondary" style="width:100%; margin-top:6px; display:none;" onclick="rimuoviWorkoutInData()">❌ Rimuovi Allenamento da questa data</button>
-        </div>
-
-        <button id="export-ics-btn" class="btn-ics">📲 Aggiungi a Calendario iPhone</button>
-      </div>
-    </div>
-
-    <!-- TABS PER VISUALIZZARE SCHEDE GIORNO 1, 2, 3 -->
-    <div class="tabs-container">
+    <nav class="tabs">
       <button class="tab-btn active" onclick="cambiaSchedaVista('Giorno 1')">Giorno 1</button>
       <button class="tab-btn" onclick="cambiaSchedaVista('Giorno 2')">Giorno 2</button>
       <button class="tab-btn" onclick="cambiaSchedaVista('Giorno 3')">Giorno 3</button>
-    </div>
+    </nav>
 
-    <div class="progress-info">
-      📈 <strong>Scheda attiva:</strong> <span id="current-tab-label">Giorno 1</span>. Inserisci i carichi e le note per ogni esercizio.
-    </div>
+    <main>
+      <h2 id="current-tab-label">Giorno 1</h2>
+      <div id="workout-list"></div>
 
-    <div id="workout-list"></div>
+      <section class="calendar-section">
+        <h3>📅 Calendario Allenamenti</h3>
+        <div id="calendar-header">
+          <span id="calendar-month-year"></span>
+          <span id="workout-count"></span>
+        </div>
+        <div id="calendar-grid">
+          <div class="weekdays">
+            <span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span>
+          </div>
+          <div id="calendar-days"></div>
+        </div>
+        <div id="calendar-actions" style="margin-top:15px; text-align:center;">
+          <p>Data selezionata: <strong id="selected-date-label"></strong></p>
+          <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:8px;">
+            <button class="btn-sm" onclick="registraWorkoutInData('Giorno 1')">Registra Giorno 1</button>
+            <button class="btn-sm" onclick="registraWorkoutInData('Giorno 2')">Registra Giorno 2</button>
+            <button class="btn-sm" onclick="registraWorkoutInData('Giorno 3')">Registra Giorno 3</button>
+          </div>
+          <button id="remove-workout-btn" class="btn-danger-sm" style="display:none; margin:10px auto 0 auto;" onclick="rimuoviWorkoutInData()">❌ Rimuovi Allenamento</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal per il Grafico dei Carichi -->
+  <div id="chart-modal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; justify-content:center; align-items:center; z-index:10000;">
+    <div style="background:white; padding:20px; border-radius:16px; width:90%; max-width:500px; position:relative;">
+      <button id="close-chart-btn" style="position:absolute; top:10px; right:15px; background:none; border:none; font-size:20px; cursor:pointer;">✕</button>
+      <h3 id="chart-title" style="font-size:16px; margin-bottom:15px; text-align:center;">Progressione Carico</h3>
+      <canvas id="progressionChart" width="400" height="250"></canvas>
+    </div>
   </div>
 
   <script type="module" src="script.js"></script>
