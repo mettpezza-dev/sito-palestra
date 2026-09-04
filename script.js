@@ -110,7 +110,8 @@ function caricaScheda() {
     const fatte = serieCompletate[item.id] || 0;
     const totali = parseInt(item.serie) || 1;
 
-    let htmlStorico = storia.slice(-3).reverse().map(h => `<small style="display:block; color:#6B7280;">📅 ${h.data}: <strong>${h.kg} kg</strong> (RIR: ${h.rir !== undefined ? h.rir : '-'})</small>`).join("");
+    // Storico pulito senza icone ripetute, mostrando le ultime sessioni
+    let htmlStorico = storia.slice(-3).reverse().map(h => `<div style="font-size:11px; color:#6B7280; padding:2px 0; border-bottom:1px solid #F3F4F6;">• <strong>${h.data}</strong> — ${h.kg} kg (RIR: ${h.rir !== undefined ? h.rir : '-'})</div>`).join("");
 
     const isInfoBlock = item.id.includes("warmup") || item.id.includes("cooldown");
     const querySearch = encodeURIComponent(item.esercizio + " esecuzione corretta biomeccanica");
@@ -174,7 +175,8 @@ function caricaScheda() {
         <div class="tracker-row" style="display: flex; gap: 6px; align-items: center; margin-bottom: 8px;">
           <input type="number" id="input-kg-${item.id}" placeholder="Kg oggi" value="${ultimoPeso}" style="flex: 2;">
           <input type="number" id="input-rir-${item.id}" placeholder="RIR" value="${ultimoRir}" style="flex: 1;" min="0" max="5" title="RIR (Ripetizioni in riserva)">
-          <button class="btn-save" id="btn-save-${item.id}" style="flex: 2;">Salva & Timer ⏱️</button>
+          <button type="button" class="btn-save" id="btn-save-${item.id}" style="flex: 1.5; background:#10B981; color:white; border:none; border-radius:6px; font-weight:600; cursor:pointer; font-size:12px; padding:8px;">💾 Salva</button>
+          <button type="button" id="btn-timer-${item.id}" style="flex: 1.5; background:#4F46E5; color:white; border:none; border-radius:6px; font-weight:600; cursor:pointer; font-size:12px; padding:8px;">⏱️ Timer</button>
           <button type="button" class="btn-reset-serie" onclick="resettaSerieEsercizio('${item.id}', ${totali})" title="Annulla serie" style="background:#f3f4f6; border:1px solid #d1d5db; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:16px;">↺</button>
         </div>
         
@@ -184,13 +186,14 @@ function caricaScheda() {
           <input type="text" id="note-${item.id}" placeholder="📝 Note macchinario / sensazioni..." value="${notaCorrente}" style="width:100%; padding:6px 10px; font-size:12px; border:1px solid #D1D5DB; border-radius:6px; margin-bottom:6px;">
         </div>
 
-        <div style="margin-top:4px;">${htmlStorico}</div>
+        <div style="margin-top:4px; background:#FAFAFA; padding:6px; border-radius:6px; border:1px solid #EEEEEE;">${htmlStorico || '<small style="color:#9CA3AF;">Nessuno storico registrato.</small>'}</div>
       ` : ''}
     `;
     container.appendChild(card);
 
     if (!isInfoBlock) {
-      document.getElementById(`btn-save-${item.id}`).addEventListener("click", () => salvaCaricoETimer(item.id, item.recupero, totali));
+      document.getElementById(`btn-save-${item.id}`).addEventListener("click", () => salvaCarico(item.id));
+      document.getElementById(`btn-timer-${item.id}`).addEventListener("click", () => avviaTimerSolo(item.id, item.recupero, totali));
       document.getElementById(`btn-chart-${item.id}`).addEventListener("click", () => apriGrafico(item.id, item.esercizio));
       
       document.getElementById(`note-${item.id}`).addEventListener("change", async (e) => {
@@ -219,10 +222,33 @@ window.resettaSerieEsercizio = function(id, totali) {
   }
 };
 
-async function salvaCaricoETimer(id, recuperoStr, totaliSerie) {
+async function salvaCarico(id) {
   const valoreKg = document.getElementById(`input-kg-${id}`).value;
   const valoreRir = document.getElementById(`input-rir-${id}`).value;
-  
+
+  if (valoreKg !== "") {
+    if (!appData.storicoCarichi[id]) appData.storicoCarichi[id] = [];
+    
+    // Controlla se esiste già un log per la data odierna, se esiste lo aggiorna, altrimenti lo aggiunge
+    const indiceEsistente = appData.storicoCarichi[id].findIndex(h => h.data === dataSelezionata);
+    const nuovoLog = { 
+      data: dataSelezionata, 
+      kg: valoreKg, 
+      rir: parseInt(valoreRir || 1) 
+    };
+
+    if (indiceEsistente >= 0) {
+      appData.storicoCarichi[id][indiceEsistente] = nuovoLog;
+    } else {
+      appData.storicoCarichi[id].push(nuovoLog);
+    }
+
+    await salvaDatiFirebase();
+    caricaScheda(); // Aggiorna istantaneamente la schermata con il box verde del target
+  }
+}
+
+function avviaTimerSolo(id, recuperoStr, totaliSerie) {
   if (!serieCompletate[id]) serieCompletate[id] = 0;
   serieCompletate[id] += 1;
 
@@ -232,17 +258,6 @@ async function salvaCaricoETimer(id, recuperoStr, totaliSerie) {
     countLabel.textContent = serieCompletate[id] >= totaliSerie 
       ? `✅ Completato (${totaliSerie}/${totaliSerie})` 
       : `${serieCompletate[id]} di ${totaliSerie} completate (mancano ${rimaste})`;
-  }
-
-  if (valoreKg !== "") {
-    if (!appData.storicoCarichi[id]) appData.storicoCarichi[id] = [];
-    appData.storicoCarichi[id].push({ 
-      data: dataSelezionata, 
-      kg: valoreKg, 
-      rir: parseInt(valoreRir || 1) 
-    });
-    await salvaDatiFirebase();
-    caricaScheda(); // Ricarica al volo per mostrare subito il box verde
   }
 
   let secondi = parseInt(recuperoStr);
@@ -429,7 +444,6 @@ function aggiornaUISelezioneData() {
     if (workoutPresente) {
       removeBtn.style.display = "block";
       removeBtn.textContent = `❌ Rimuovi ${workoutPresente} da questa data`;
-      // Assicura che il click sul pulsante richiami la funzione di rimozione
       removeBtn.onclick = rimuoviWorkoutInData;
     } else {
       removeBtn.style.display = "none";
